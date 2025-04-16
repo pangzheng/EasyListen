@@ -51,6 +51,16 @@
    /* 错误通知样式 */
    --error-bg: #f44336;
    --error-text: #ffffff;
+
+   /* 提示框样式 */
+   --tooltip-min-width: 100px;
+   --tooltip-max-width: 500px;
+   --tooltip-padding: 8px 12px;
+   --tooltip-font-size: 12px;
+   --tooltip-line-height: 1.4;
+   --tooltip-border: 1px solid var(--border-light);
+   --tooltip-bg: var(--bg-light);
+   --tooltip-fg: var(--fg-light);
 }
 
 body {

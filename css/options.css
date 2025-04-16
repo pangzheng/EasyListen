@@ -9,6 +9,12 @@ body {
   overflow-y: auto; /* 页面滚动 */
 }
 
+body.dark {
+  --tooltip-border: 1px solid var(--border-dark);
+  --tooltip-bg: var(--bg-dark);
+  --tooltip-fg: var(--fg-dark);
+}
+
 /* 容器 */
 .container {
   max-width: 350px; /* 设置容器的最大宽度为350像素，可以根据需要调整 */
@@ -225,33 +231,77 @@ body.light .tooltip-icon {
 body.dark .tooltip-icon {
   background-color: var(--tooltip-icon-dark); /* 蓝色背景 */
 }
-/* 提示框 */
+
+/* 提示框基础样式 */
 .tooltip-icon::after {
-  content: attr(data-tooltip); /* 使用 data-tooltip 的内容 */
-  position: absolute;
-  top: 100%; /* 显示在图标下方 */
-  left: 50%;
-  transform: translateX(-50%);
+  content: attr(data-tooltip); /* 显示 data-tooltip 属性的值作为提示内容 */
+  position: absolute; /* 绝对定位 */
+  top: 100%; /* 默认显示在图标下方 */
+  left: 50%; /* 水平居中对齐 */
+  transform: translateX(-50%); /* 水平居中对齐 */
+  /*
+   * 背景色、文字颜色
+   */
   background-color: var(--bg-light);
   color: var(--fg-light);
-  padding: 8px;
-  border-radius: var(--border-radius);
-  border: var(--border-width) solid var(--border-light);
-  font-size: 12px;
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-  z-index: 1000;
+
+  padding: 8px 12px; /* 增加水平内边距，改善换行效果 */
+  border-radius: var(--border-radius); /* 设置圆角半径 */
+  border: var(--border-width) solid var(--border-light); /* 设置边框样式 */
+  font-size: 12px; /* 文字大小 */
+  white-space: normal; /* 允许换行 */
+  line-height: 1.4; /* 行高设置为1.4倍，增加可读性 */
+  opacity: 0; /* 初始透明度为0，隐藏提示框 */
+  pointer-events: none; /* 禁用鼠标事件，避免干扰其他元素的交互 */
+  transition: opacity 0.3s ease;   /* 过渡效果，使显示和消失更加平滑 */
+  z-index: 1000; /* 设置图层堆叠顺序，确保提示框在其他元素之上 */
+
+  /*
+   * 最小宽度设置以适应短文本（确保美观），最大宽度防止过宽
+   */
+  min-width: 140px;
+  max-width: 250px; 
+
+  box-sizing: border-box;/* 确保内边距不会影响宽度，以及对齐方式 */
+  text-align: left; /* 左对齐文本，适合换行 */
 }
+
 body.dark .tooltip-icon::after {
   background-color: var(--bg-dark);
   color: var(--fg-dark);
   border-color: var(--border-dark);
 }
-/* 鼠标悬停时显示提示框 */
+
+/* 鼠标悬停时显示 */
 .tooltip-icon:hover::after {
   opacity: 1;
+}
+
+/* 边界处理类：左侧对齐 */
+.tooltip-icon.tooltip-left::after {
+  left: 0;
+  transform: none; /* 取消居中 */
+}
+
+/* 边界处理类：右侧对齐 */
+.tooltip-icon.tooltip-right::after {
+  right: 0;
+  left: auto;
+  transform: none; /* 取消居中 */
+}
+
+/* 边界处理类：向上显示 */
+.tooltip-icon.tooltip-top::after {
+  top: auto;
+  bottom: 100%; /* 显示在图标上方 */
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* 可选：超高提示框启用滚动 */
+.tooltip-icon.tooltip-scroll::after {
+  max-height: 150px; /* 限制最大高度 */
+  overflow-y: auto; /* 启用垂直滚动 */
 }
 
 /* 高级按钮 */

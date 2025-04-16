@@ -121,6 +121,61 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
+  // 获取所有 tooltip 图标
+  const tooltipIcons = document.querySelectorAll('.tooltip-icon');
+
+  // 防抖函数（复用 utils.js 中的 debounce）
+  const adjustTooltipPosition = window.debounce((event) => {
+    const icon = event.target;
+    const rect = icon.getBoundingClientRect();
+    const tooltipText = icon.getAttribute('data-tooltip') || '';
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+
+    // 重置所有定位类
+    icon.classList.remove('tooltip-left', 'tooltip-right', 'tooltip-top', 'tooltip-scroll');
+
+    // 创建临时元素并应用 .tooltip-temp 类
+    const tempTooltip = document.createElement('div');
+    tempTooltip.className = 'tooltip-temp';
+    tempTooltip.textContent = tooltipText;
+    document.body.appendChild(tempTooltip);
+    const tooltipRect = tempTooltip.getBoundingClientRect();
+    document.body.removeChild(tempTooltip);
+
+    const tooltipWidth = Math.min(tooltipRect.width, 500); // 限制最大宽度为 500px
+    const tooltipHeight = tooltipRect.height;
+
+    // 计算提示框左右边界
+    const tooltipLeft = rect.left + (rect.width / 2) - (tooltipWidth / 2);
+    const tooltipRight = tooltipLeft + tooltipWidth;
+
+    // 左侧溢出
+    if (tooltipLeft < 10) {
+      icon.classList.add('tooltip-left');
+    }
+    // 右侧溢出
+    else if (tooltipRight > viewportWidth - 10) {
+      icon.classList.add('tooltip-right');
+    }
+
+    // 垂直空间不足
+    if (rect.bottom + tooltipHeight + 10 > viewportHeight) {
+      icon.classList.add('tooltip-top');
+    }
+
+    // 超高提示框启用滚动
+    if (tooltipHeight > 150) {
+      icon.classList.add('tooltip-scroll');
+    }
+  }, 50);
+
+  // 为每个 tooltip 图标添加鼠标悬停事件
+  tooltipIcons.forEach((icon) => {
+    icon.addEventListener('mouseenter', adjustTooltipPosition);
+  });
+
+
   // 初始化默认设置（如果存储中没有 settings）
   const initDefaultSettings = async () => {
     const { settings } = await window.getStorageData(['settings']);

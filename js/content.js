@@ -29,12 +29,6 @@ function createFloatingUI() {
   link.onerror = () => console.error('无法加载 content.css，请检查路径或文件内容');
   document.head.appendChild(link);
 
-  const linkTheme = document.createElement('link');
-  linkTheme.rel = 'stylesheet';
-  linkTheme.href = chrome.runtime.getURL('css/theme.css'); // 加载主题样式
-  linkTheme.onerror = () => console.error('无法加载 theme.css，请检查路径或文件内容');
-  document.head.appendChild(linkTheme);
-
   // 创建 UI 容器
   const ui = document.createElement('div');
   ui.id = 'tts-floating-ui';
