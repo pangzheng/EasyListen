@@ -1,0 +1,8 @@
+{
+    "extensionName": {
+      "message": "EasyListen"
+    },
+    "extensionDescription": {
+      "message": "EasyListen is a lightweight and user-friendly Chrome extension specifically designed for compatibility with local and remote OpenAI TTS API standards. It can quickly convert text into natural-sounding speech, making it convenient for users to get information by listening. Whether you want to read web content aloud, learn a language, assist in reading, or help friends with reading disabilities enjoy reading without barriers, EasyListen is your ideal choice."
+    }
+  }

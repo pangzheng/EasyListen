@@ -1,16 +1,30 @@
 {
   "manifest_version": 3,
-  "name": "易听/EasyListen",
+  "name": "__MSG_extensionName__",
   "version": "0.1.1",
-  "description": "易听是一款轻量级、易用的 Chrome 扩展，专为兼容本地和远程的 OpenAI TTS API 标准而设计。它能够快速将文本转换成自然流畅的语音,方便用户以听觉方式获取信息。无论您是想朗读网页内容、学习语言、辅助阅读，还是帮助有阅读障碍的朋友无障碍地享受阅读的乐趣,易听都是您的理想选择。EasyListen is a lightweight and user-friendly Chrome extension specifically designed for compatibility with local and remote OpenAI TTS API standards. It can quickly convert text into natural-sounding speech, making it convenient for users to get information by listening. Whether you want to read web content aloud, learn a language, assist in reading, or help friends with reading disabilities enjoy reading without barriers, EasyListen is your ideal choice.",
-  "host_permissions": [
-    "http://localhost/*"
-  ],
+  "description": "__MSG_extensionDescription__",
+  "default_locale": "en",
+  "minimum_chrome_version": "88",
   "permissions": [
     "tabs",
     "activeTab",
-    "storage"
+    "storage",
+    "scripting",
+    "downloads"
   ],
+  "optional_host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
+  "host_permissions": [
+    "http://localhost/*"
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
@@ -23,8 +37,15 @@
   "options_page": "options.html", 
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
-      "js": ["js/utils.js", "js/audio.js", "js/content.js"],
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "js/utils.js",
+        "js/audio.js",
+        "js/content.js"
+      ],
       "run_at": "document_end"
     }
   ],
@@ -36,7 +57,13 @@
         "css/*.css",
         "icons/ting.svg"
       ],
-      "matches": ["<all_urls>"]
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ]
     }
-  ]
+  ],
+    "content_security_policy": {
+      "extension_pages": "script-src 'self'; object-src 'self'" 
+    }
 }
