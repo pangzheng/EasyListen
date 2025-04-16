@@ -74,9 +74,7 @@ async function fetchAudioSegment(segment, voice, speed, format, index, signal) {
       return { index, success: false, error: { message: 'Fetch aborted', code: 'ABORT_ERROR' } };
     }
     console.error(`Error fetching segment ${index}:`, error.message);
-    alert(window.currentLang === 'en' 
-      ? `Error fetching segment ${index}: ${error.message}`
-      : `获取段落出错 ${index}: ${error.message}`);
+    window.showErrorNotification('fetchSegmentError', { index, error: error.message });
     return { 
       index, 
       success: false, 
@@ -149,9 +147,7 @@ async function fetchSegmentsSerially(segments, voice, speed, format, maxConcurre
               }
             } catch (error) {
               console.error('Failed to play audio:', error);
-              alert(window.currentLang === 'en' 
-                ? 'Audio playback failed. Please click the play button manually.' 
-                : '音频播放失败。请手动点击播放按钮。');
+              window.showErrorNotification('audioPlaybackFailed');
             }
             audioPlayer.oncanplay = null;
             audioPlayer.onerror = null;
@@ -168,10 +164,10 @@ async function fetchSegmentsSerially(segments, voice, speed, format, maxConcurre
       } else {
         hasError = true; // 标记错误，停止后续处理
         console.error(`Failed to fetch segment ${result.index}: ${result.error.message}`);
-        // 在控制台输出错误信息  
-        alert(window.currentLang === 'en'
-          ? `Audio generation stopped due to an error at segment ${result.index}: ${result.error.message}`
-          : `音频生成在第 ${result.index} 段时发生错误：${result.error.message}`);
+        window.showErrorNotification('fetchSegmentError', { 
+          index: result.index, 
+          error: result.error.message 
+        });
         break; // 中断当前批次处理
       }
     }
@@ -212,9 +208,7 @@ function updateTimeAndProgress(totalSegments) {
     timeDisplay.textContent = `${formatTime(currentTime)} ${formatTime(totalCachedDuration)}`;
   } else {
     console.error('Time display element not found');
-    alert(window.currentLang === 'en' 
-      ? 'Time display element not found' 
-      : '时间显示元素未找到。');
+    window.showErrorNotification('timeDisplayNotFound');
   }
   // 更新分片显示
   const segmentDisplay = document.getElementById('tts-segment-display');
@@ -222,6 +216,7 @@ function updateTimeAndProgress(totalSegments) {
     segmentDisplay.textContent = `${audioBuffer.length}/${totalSegments}`;
   } else {
     console.error('Segment display element not found');
+    window.showErrorNotification('segmentDisplayNotFound');
   }
 
   console.log('updateTimeAndProgress:', { totalSegments, audioBufferLength: audioBuffer.length });

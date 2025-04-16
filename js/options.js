@@ -49,9 +49,10 @@ const updateSetting = async (key, value, subKey = null) => {
     showSaveMessage();
   } catch (error) {
     console.error(`Failed to update setting ${key}${subKey ? `.${subKey}` : ''}:`, error);
-    showErrorNotification(window.currentLang === 'en' 
-      ? `Failed to save ${key}${subKey ? `.${subKey}` : ''}.` 
-      : `保存${key}${subKey ? `.${subKey}` : ''}失败。`);
+    window.showErrorNotification('saveSettingError', { 
+      key: subKey ? `${key}.${subKey}` : key, 
+      error: error.message 
+    });
   }
 };
 
@@ -64,9 +65,7 @@ function showSaveMessage() {
   setTimeout(() => elements.saveMessage.classList.remove('show'), 2000); 
   } else {
     console.warn('Save message element not found, skipping display');
-    alert(window.currentLang === 'en' 
-      ? `Save message element not found, skipping display`
-      : `保存消息元素未找到，跳过显示`);
+    window.showErrorNotification('saveSettingError', { key: 'saveMessage' });
   }
 }
 
@@ -74,9 +73,7 @@ function showSaveMessage() {
 async function updateExampleAudio() {
   if (!elements.voiceSelect) {
     console.warn('Voice select element not found, cannot update example audio');
-    alert(window.currentLang === 'en' 
-      ? `Voice select element not found, cannot update example audio`
-      : `语音选择元素未找到，无法更新示例音频`);
+    window.showErrorNotification('voiceSelectNotFound');
     return;
   }
 
@@ -91,21 +88,10 @@ async function updateExampleAudio() {
     exampleAudio.src = audioPath;
   } catch (error) {
     console.error('Failed to load example audio:', error);
-    showErrorNotification(window.currentLang === 'en' 
-      ? `Preview audio for ${selectedVoice} is missing.` 
-      : `${selectedVoice} 的预览音频缺失。`);
+    window.showErrorNotification('audioFileNotFound', { voice: selectedVoice });
     exampleAudio.src = '';
     if (elements.playExampleBtn) elements.playExampleBtn.disabled = true;
   }
-}
-
-// 显示错误提示
-function showErrorNotification(message) {
-  const notification = document.createElement('div');
-  notification.textContent = message;
-  notification.style.cssText = 'position: fixed; top: 10px; right: 10px; background: #f44336; color: white; padding: 10px; border-radius: 5px; z-index: 1000;';
-  document.body.appendChild(notification);
-  setTimeout(() => notification.remove(), 5000);
 }
 
 // 处理页面加载完成事件
@@ -115,6 +101,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // 检查页面上下文
   if (!document.querySelector('#voices')) {
     console.warn('options.js running in unexpected context, skipping initialization');
+    window.showErrorNotification('unexpectedContext');
     return;
   }
 
@@ -125,13 +112,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   if (missingElements.length > 0) {
     console.error('Missing DOM elements:', missingElements);
-    showErrorNotification('Some interface elements failed to load. Functionality may be limited.');
+    window.showErrorNotification('domElementsMissing', { elements: missingElements.join(', ') });
     // 如果关键元素缺失，禁用相关功能
     if (!elements.voiceSelect || !elements.formatSelect || !elements.languageBtn) {
       console.error('Critical elements missing, stopping initialization');
-      alert(window.currentLang === 'en' 
-        ? `Critical elements missing, stopping initialization`
-        : `关键元素缺失，停止初始化`);
+      window.showErrorNotification('criticalElementsMissing');
       return;
     }
   }
@@ -196,9 +181,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       console.log('options.js: voiceSelect color:', getComputedStyle(elements.voiceSelect).color);
     } catch (error) {
       console.error('Failed to load settings:', error);
-      showErrorNotification(window.currentLang === 'en' 
-        ? 'Failed to load settings. Using defaults.' 
-        : '加载设置失败，使用默认值。');
+      window.showErrorNotification('saveSettingError', { key: 'settings', error: error.message });
 
       document.body.classList.remove('light', 'dark');
       document.body.classList.add('light');
@@ -337,9 +320,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (exampleAudio.src) { // 仅在 src 有效时播放
         exampleAudio.play().catch(error => {
           console.error('Failed to play audio:', error);
-          showErrorNotification(window.currentLang === 'en' 
-            ? 'Failed to play audio.' 
-            : '无法播放音频。');
+          window.showErrorNotification('playAudioFailed');
         });
       }
     });

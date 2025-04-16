@@ -47,6 +47,10 @@
   --border-radius: 4px; /* 默认圆角 */
   --border-radius-circle: 50%; /* 圆形按钮 */
   --border-width: 1px; /* 边框宽度 */
+
+   /* 错误通知样式 */
+   --error-bg: #f44336;
+   --error-text: #ffffff;
 }
 
 body {
@@ -134,4 +138,22 @@ body.light button:hover {
 }
 body.dark button:hover {
   background-color: var(--hover-dark);
+}
+
+/* 错误通知样式 */
+.error-notification {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background-color: var(--error-bg);
+  color: var(--error-text);
+  padding: 10px 20px;
+  border-radius: var(--border-radius);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 10000;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+.error-notification.fade-out {
+  opacity: 0;
 }

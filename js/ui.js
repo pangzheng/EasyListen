@@ -20,7 +20,8 @@ async function updateTextareaContent(textarea) {
 
     // 如果 URL 是无效的或者以 "chrome://" 或 "about:" 开头，则提示错误信息
     if (!tab.url || tab.url.startsWith('chrome://') || tab.url.startsWith('about:')) {
-      textarea.value = window.currentLang === 'en' ? 'Error: Cannot access this page，Please try another http/https page' : '错误：此页面不合规无法访问此页面，请尝试其他 http/https 页面';
+      textarea.value = '';
+      window.showErrorNotification('pageAccessError');
     } else {
       // 如果 URL 是有效的，则发送消息到内容脚本，获取页面内容
       try {
@@ -33,15 +34,15 @@ async function updateTextareaContent(textarea) {
           textarea.value = response.fullText;
         } else {
           // 否则提示没有内容可用的信息
-          textarea.value = window.currentLang === 'en' ? 'No content available' : '无可用内容';
+          textarea.value = '';
+          window.showErrorNotification('noContentAvailable');
         }
       } catch (sendError) {
         // 如果发送消息时出现错误，且错误信息中包含 "Receiving end does not exist" 则提示脚本未加载
         if (sendError.message.includes('Receiving end does not exist')) {
           console.error('Content script not loaded in this tab:', sendError);
-          textarea.value = window.currentLang === 'en' 
-            ? 'Content has not loaded. Please refresh the page or paste the content here.' 
-            : '内容未加载,请重新刷新页面或者粘贴内容到这里';
+          textarea.value = '';
+          window.showErrorNotification('contentScriptNotLoaded');
         } else {
           // 如果其他类型的错误发生，则抛出此错误
           throw sendError;
@@ -51,9 +52,8 @@ async function updateTextareaContent(textarea) {
   } catch (error) {
     // 处理外部的异常，即在获取标签页信息时发生的错误
     console.error('Error fetching page content:', error);
-    textarea.value = window.currentLang === 'en' 
-      ? 'Error fetching page content' 
-      : '页面获取内容出错';
+    textarea.value = '';
+    window.showErrorNotification('fetchContentError');
   }
 }
 
@@ -63,9 +63,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // 检查页面上下文
   if (!document.querySelector('#text-area')) {
     console.warn('ui.js running in unexpected context, skipping initialization');
-    textarea.value = window.currentLang === 'en' 
-      ? 'ui.js running in unexpected context, skipping initialization' 
-      : 'ui.js 在意外的上下文中运行，跳过初始化';
+    window.showErrorNotification('unexpectedContext');
     return;
   }
 
@@ -118,9 +116,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   
   if (missingElements.length > 0) {
     console.error('The following DOM elements were not found:', missingElements);
-    alert(window.currentLang === 'en' 
-      ? `The following DOM elements were not found: ${missingElements}`
-      : `以下 DOM 元素未找到:  ${missingElements}`);
+    window.showErrorNotification('domElementsMissing', { elements: missingElements.join(', ') });
     return;
   }
   
@@ -136,13 +132,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       await updateTextareaContent(elements.textarea);
 
       // 调试按钮样式
-      console.log('ui.js: langToggleBtn background:', getComputedStyle(elements.langToggleBtn).backgroundColor);
-      console.log('ui.js: langToggleBtn color:', getComputedStyle(elements.langToggleBtn).color);
+      // console.log('ui.js: langToggleBtn background:', getComputedStyle(elements.langToggleBtn).backgroundColor);
+      // console.log('ui.js: langToggleBtn color:', getComputedStyle(elements.langToggleBtn).color);
     } catch (error) {
       console.error('Error initializing state:', error);
-      alert(window.currentLang === 'en' 
-            ? `Error initializing state:: ${error}`
-            : `初始化语言和主题失败: ${error}`);
+      window.showErrorNotification('initStateError', { error: error.message });
       window.currentLang = 'en';
       window.currentTheme = 'light';
       document.body.classList.remove('light', 'dark');
@@ -174,9 +168,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       // console.log('Language saved to chrome.storage.sync:', newLang);
     } catch (error) {
       console.error('Error saving language:', error);
-      alert(window.currentLang === 'en' 
-        ? `Error saving language: ${error}`
-        : `设置语言保存错误: ${error}`);
+      window.showErrorNotification('saveLanguageError', { error: error.message });
     }
   });
 
@@ -188,15 +180,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.updateLanguage(window.currentLang);
     try {
       await window.setStorageData({ theme: window.currentTheme });
-      console.log('ui.js: Theme saved:', window.currentTheme);
+      // console.log('ui.js: Theme saved:', window.currentTheme);
       // 调试按钮样式
-      console.log('ui.js: langToggleBtn background:', getComputedStyle(elements.langToggleBtn).backgroundColor);
-      console.log('ui.js: langToggleBtn color:', getComputedStyle(elements.langToggleBtn).color);
+      // console.log('ui.js: langToggleBtn background:', getComputedStyle(elements.langToggleBtn).backgroundColor);
+      // console.log('ui.js: langToggleBtn color:', getComputedStyle(elements.langToggleBtn).color);
     } catch (error) {
       console.error('Error saving theme:', error);
-      alert(window.currentLang === 'en' 
-        ? `Error saving theme: ${error}`
-        : `设置主题保存错误: ${error}`);
+      window.showErrorNotification('saveThemeError', { error: error.message });
     }
   });
 
@@ -210,7 +200,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
      // 如果没有输入文本，则提示用户
     if (!content) {
-      alert(window.currentLang === 'en' ? 'Please enter some text to generate audio.' : '请输入要生成音频的文本。');
+      window.showErrorNotification('emptyTextError');
       return;
     }
 
@@ -233,9 +223,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }, (response) => { // 回调函数：接收内容脚本的响应
       if (chrome.runtime.lastError) { //检查消息发送过程中是否发生错误
         console.error('Error sending message:', chrome.runtime.lastError); // 记录详细错误信息
-        alert(window.currentLang === 'en' 
-          ? `Error sending message: ${chrome.runtime.lastError}` 
-          : `发送消息出错: ${chrome.runtime.lastError}`);
+        window.showErrorNotification('sendMessageError', { error: chrome.runtime.lastError.message });
       } else {
         // 打印跟踪信息
         console.log('Audio generation started:', response);

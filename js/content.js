@@ -183,9 +183,7 @@ const elements = {
 elements.ttsPlayPauseBtn.addEventListener('click', () => {
   // 如果没有生成音频，请先生成音频
   if (window.audioBuffer.length === 0) {
-    alert(window.currentLang === 'en' 
-      ? 'Please generate audio first.' 
-      : '请先生成音频。');
+    window.showErrorNotification('noAudioGenerated');
     return;
   }
 
@@ -196,9 +194,7 @@ elements.ttsPlayPauseBtn.addEventListener('click', () => {
       window.audioPlayer.src = window.audioBuffer[window.currentSegmentIndex].url;
     } else {
       console.error('No valid audio segment available');
-      alerted(window.currentLang === 'en' 
-        ? 'No audio available to play.' 
-        : '没有可播放的音频。');
+      window.showErrorNotification('noAudioAvailable');
       return;
     }
   }
@@ -211,9 +207,7 @@ elements.ttsPlayPauseBtn.addEventListener('click', () => {
     })
     .catch(error => {
       console.error('Failed to play audio:', error);
-      alert(window.currentLang === 'en' 
-        ? 'Failed to play audio. Please try again.' 
-        : '播放音频失败，请重试。');
+      window.showErrorNotification('playAudioFailed');
     });
   } else {
     window.audioPlayer.pause();
@@ -232,9 +226,7 @@ elements.ttsDownloadBtn.addEventListener('click', async () => {
 
   // 检查 audioBuffer 是否有内容
   if (window.audioBuffer.length === 0 || !window.audioBuffer.every(item => item.blob instanceof Blob)) {
-    alert(window.currentLang === 'en' 
-      ? 'No audio available to download. Please generate audio first.' 
-      : '没有可下载的音频，请先生成音频。');
+    window.showErrorNotification('noAudioToDownload');
     return;
   }
   
@@ -264,9 +256,7 @@ elements.ttsDownloadBtn.addEventListener('click', async () => {
     window.audioBuffer.forEach(item => delete item.blob);
   } catch (error) {
     console.error('Failed to generate downloadable audio:', error);
-    alert(window.currentLang === 'en' 
-      ? 'Failed to download audio. Please try again.' 
-      : '下载音频失败，请重试。');
+    window.showErrorNotification('downloadAudioFailed');
   }
 });
 
