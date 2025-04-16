@@ -1,19 +1,52 @@
 /* common.css */
 :root {
-  /* 浅色主题 */
-  --bg-light: #ffffff;
-  --fg-light: #000000;
-  --border-light: #dddddd;
-  --hover-light: #f0f0f0;
-  /* 深色主题 */
-  --bg-dark: #333333;
-  --fg-dark: #ffffff;
-  --border-dark: #555555;
-  --hover-dark: #555555;
-  /* 额外变量 */
-  --placeholder-color: #888;
-  --placeholder-color-light: #666;
-  --placeholder-color-dark: #aaa;
+  /* 浅色主题颜色变量 */
+  --bg-light: #ffffff; /* 浅色主题背景颜色 */
+  --fg-light: #000000; /* 浅色主题前景色（文本颜色） */
+  --border-light: #dddddd; /* 浅色主题边框颜色 */
+  --hover-light: #f0f0f0; /* 浅色主题悬停效果背景颜色 */
+
+  /* 深色主题颜色变量 */
+  --bg-dark: #333333; /* 深色主题背景颜色 */
+  --fg-dark: #ffffff; /* 深色主题前景色（文本颜色） */
+  --border-dark: #555555; /* 深色主题边框颜色 */
+  --hover-dark: #555555; /* 深色主题悬停效果背景颜色 */
+
+  /* 额外颜色变量，用于占位符文本 */
+  --placeholder-color: #888; /* 浅色主题占位符文本颜色 */
+  --placeholder-color-light: #666; /* 更多亮度控制 */
+  --placeholder-color-dark: #aaa; /* 深色主题占位符文本颜色 */
+
+  /* 统一按钮样式颜色变量 */
+  --button-bg-light: #4CAF50; /* 浅色主题按钮背景颜色 */
+  --button-bg-dark: #2833a7; /* 深色主题按钮背景颜色 */
+  --button-hover-light: #60de65; /* 浅色主题按钮悬停背景颜色 */
+  --button-hover-dark: #666fce; /* 深色主题按钮悬停背景颜色 */
+  --button-secondary-bg-light: #f6675a; /* 浅色主题次要按钮背景颜色 */
+  --button-secondary-bg-dark: #f44336; /* 深色主题次要按钮背景颜色 */
+  --button-secondary-hover-light: #e55a4e; /* 浅色主题次要按钮悬停背景颜色 */
+  --button-secondary-hover-dark: #da190b; /* 深色主题次要按钮悬停背景颜色 */
+  --button-advanced-bg-light: #2833a7; /* 浅色主题高级按钮背景颜色 */
+  --button-advanced-bg-dark: #4CAF50; /* 深色主题高级按钮背景颜色 */
+  --button-advanced-hover-light: #666fce; /* 浅色主题高级按钮悬停背景颜色 */
+  --button-advanced-hover-dark: #60de65; /* 深色主题高级按钮悬停背景颜色 */
+  --button-close-bg: #922415; /* 关闭按钮背景颜色 */
+  --button-close-hover: #e9432d; /* 关闭按钮悬停背景颜色 */
+
+   /* 统一字体颜色 */
+   --font-color-light: black; /* 浅色主题字体颜色 */
+   --font-color-dark: white; /* 深色主题字体颜色 */
+
+  /* 统一提示框颜色变量 */
+   --tooltip-icon-light: #214f81; /* 提示框图标颜色 */
+   --tooltip-icon-dark: #78ace4; /* 提示框图标颜色 */
+  /* 按钮过渡效果 (已注释，可以根据需要启用) */
+  --button-transition: background-color 0.3s, color 0.3s, border-color 0.3s; /* 按钮过渡效果 */
+
+  /* 统一圆角和边框 (已注释，可以根据需要启用) */
+  --border-radius: 4px; /* 默认圆角 */
+  --border-radius-circle: 50%; /* 圆形按钮 */
+  --border-width: 1px; /* 边框宽度 */
 }
 
 body {
@@ -33,8 +66,8 @@ body.dark {
 /* 下拉菜单样式 */
 select {
   padding: 5px 24px 5px 5px;
-  border: 1px solid;
-  border-radius: 4px;
+  border: var(--border-width) solid;
+  border-radius: var(--border-radius);
   font-size: 14px;
   cursor: pointer;
   -webkit-appearance: none;
@@ -43,7 +76,7 @@ select {
   background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="5" viewBox="0 0 10 5"><path fill="currentColor" d="M0 0h10L5 5z"/></svg>');
   background-repeat: no-repeat;
   background-position: right 8px center;
-  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+  transition: var(--button-transition);
 }
 
 input,
@@ -82,20 +115,18 @@ body.dark select option {
 /* 按钮基础样式 */
 button {
   padding: 5px 10px;
-  border: 1px solid;
-  border-radius: 4px;
+  border: var(--border-width) solid;
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-size: 14px;
-  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+  transition: var(--button-transition);
 }
 body.light button {
   background-color: var(--bg-light);
-  color: var(--fg-light);
   border-color: var(--border-light);
 }
 body.dark button {
   background-color: var(--bg-dark);
-  color: var(--fg-dark);
   border-color: var(--border-dark);
 }
 body.light button:hover {

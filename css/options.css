@@ -1,6 +1,6 @@
 /* options.css */
 body {
-  zoom: 60%; /* 默认值，可调整初始缩放比例 */
+  /*zoom: 60%;  默认值，可调整初始缩放比例 */
   display: flex; /* 使用 Flexbox 居中 */
   justify-content: center; /* 水平居中 */
   align-items: center; /* 垂直居中 */
@@ -11,14 +11,16 @@ body {
 
 /* 容器 */
 .container {
-  max-width: 350px; /* 可调节宽度 */
-  width: 100%;
-  padding: 20px;
-  border: 2px solid var(--border-light); /* 默认边框 */
-  border-radius: 8px;
-  box-sizing: border-box;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: border-color 0.3s, box-shadow 0.3s;
+  max-width: 350px; /* 设置容器的最大宽度为350像素，可以根据需要调整 */
+  width: 100%; /* 容器宽度占满其父元素的宽度 */
+  padding: 20px; /* 内边距为20像素 */
+  border: var(--border-width) solid var(--border-light); /* 设置边框为2像素宽、实线、颜色由变量 --border-light 控制 */
+  border-radius: 8px; /* 圆角半径为8像素 */
+  box-sizing: border-box; /* 确保 padding 和 border 不会增加元素的宽度和高度 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 设置底部水平阴影，偏移量为0、水平偏移4像素、垂直偏移8像素、颜色为半透明黑色 */
+  transition: border-color 0.3s, box-shadow 0.3s; /* 边框颜色和阴影在0.3秒内平滑过渡 */
+  transform: scale(1.5); /* 确保容器不会缩放，修正了之前的缩放值 */
+  margin: 200px auto; /* 增加垂直外边距为50像素，并使用auto使左右两侧自动对齐，实现水平居中 */
 }
 body.light .container {
   border-color: var(--border-light);
@@ -89,39 +91,37 @@ label {
 /* 绿色按钮 */
 .btn-green {
   border-color: transparent;
+  color: var(--font-color-dark);
 }
 body.light .btn-green {
-  background-color: #4CAF50;
-  color: white;
+  background-color: var(--button-bg-light);
 }
 body.dark .btn-green {
-  background-color: #2833a7;
-  color: white;
+  background-color: var(--button-bg-dark);
 }
 body.light .btn-green:hover {
-  background-color: #45a049;
+  background-color: var(--button-hover-light);
 }
 body.dark .btn-green:hover {
-  background-color: #1e2a7b;
+  background-color: var(--button-hover-dark);
 }
 
 /* 红色按钮 */
 .btn-secondary {
   border-color: transparent;
+  color: var(--font-color-dark);
 }
 body.light .btn-secondary {
-  background-color: #f6675a;
-  color: white;
+  background-color: var(--button-secondary-bg-light);
 }
 body.dark .btn-secondary {
-  background-color: #f44336;
-  color: white;
+  background-color: var(--button-secondary-bg-dark);
 }
 body.light .btn-secondary:hover {
-  background-color: #e55a4e;
+  background-color: var(--button-secondary-hover-light);
 }
 body.dark .btn-secondary:hover {
-  background-color: #da190b;
+  background-color: var(--button-secondary-hover-dark);
 }
 
 /* 小文本 */
@@ -130,10 +130,10 @@ small {
   margin-top: 5px;
 }
 body.light small {
-  color: #666666;
+  color: var(--placeholder-color-light);
 }
 body.dark small {
-  color: #cccccc;
+  color: var(--placeholder-color-dark);
 }
 
 /* 保存提示 */
@@ -141,10 +141,10 @@ body.dark small {
   position: fixed;
   top: 20px;
   right: 20px;
-  background-color: #4CAF50;
-  color: white;
+  background-color: var(--button-bg-light);
+  color: var(--font-color-dark);
   padding: 10px 20px;
-  border-radius: 5px;
+  border-radius: var(--border-radius);
   opacity: 0;
   transition: opacity 0.5s ease-in-out;
   z-index: 1000;
@@ -160,14 +160,14 @@ body.dark small {
   max-width: 300px; /* 最大宽度限制，避免过宽 */
   box-sizing: border-box; /* 确保 padding 和 border 不增加总宽度 */
   padding: 8px;
-  border: 1px solid;
-  border-radius: 4px;
+  border: var(--border-width) solid;
+  border-radius: var(--border-radius);
   margin-top: 5px;
   color: inherit;
-  background-color: var(--bg-light);
 }
 body.light #api-url,
 body.light #api-key {
+  background-color: var(--bg-light);
   border-color: var(--border-light);
 }
 body.dark #api-url,
@@ -195,8 +195,8 @@ body.dark #api-key::placeholder {
   font-size: 12px;
   color: var(--fg-light);
   text-align: center;
-  margin-top: 10px;
 }
+
 body.dark .version {
   color: var(--fg-dark);
 }
@@ -208,7 +208,7 @@ body.dark .version {
   margin-left: auto; /* 根据需要设置左边距 */
   width: 16px;  /* 设置元素的宽度 */
   height: 16px; /* 设置元素的高度 */
-  border-radius: 50%; /* 将元素设置为圆形 */
+  border-radius: var(--border-radius-circle); /* 将元素设置为圆形 */
   font-size: 12px; /* 设置字体大小 */
   font-weight: bold; /* 设置字体加粗 */
   text-align: center; /* 设置文本居中 */
@@ -217,14 +217,13 @@ body.dark .version {
   position: relative; /* 用于定位提示框 */
   transition: background-color 0.3s, color 0.3s; /* 颜色过渡效果，使颜色变化更平滑 */
   transform: scale(0.7); /*  例如，缩小到 70% */
+  color: var(--font-color-dark); /* 白色叹号 */
 }
 body.light .tooltip-icon {
-  background-color: #007bff; /* 蓝色背景 */
-  color: #ffffff; /* 白色叹号 */
+  background-color: var(--tooltip-icon-light); /* 蓝色背景 */
 }
 body.dark .tooltip-icon {
-  background-color: #17a2b8; /* 青色背景 */
-  color: #ffffff; /* 白色叹号 */
+  background-color: var(--tooltip-icon-dark); /* 蓝色背景 */
 }
 /* 提示框 */
 .tooltip-icon::after {
@@ -236,8 +235,8 @@ body.dark .tooltip-icon {
   background-color: var(--bg-light);
   color: var(--fg-light);
   padding: 8px;
-  border-radius: 4px;
-  border: 1px solid var(--border-light);
+  border-radius: var(--border-radius);
+  border: var(--border-width) solid var(--border-light);
   font-size: 12px;
   white-space: nowrap;
   opacity: 0;
@@ -260,27 +259,24 @@ body.dark .tooltip-icon::after {
   width: 100%;
   max-width: 300px;
   padding: 8px;
-  border: 1px solid;
-  border-radius: 4px;
   cursor: pointer;
   font-size: 14px;
-  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+  transition: var(--button-transition);
+  color: var(--font-color-dark); /* 字体颜色 */
 }
 body.light .btn-advanced {
-  background-color: #2833a7;
-  color: white;
+  background-color: var(--button-advanced-bg-light); /* 按钮背景颜色 */
   border-color: var(--border-light);
 }
 body.dark .btn-advanced {
-  background-color: #4CAF50;
-  color: white;
+  background-color: var(--button-advanced-bg-dark); /* 按钮背景颜色 */
   border-color: var(--border-dark);
 }
 body.light .btn-advanced:hover {
-  background-color: #303cc7;
+  background-color: var(--button-advanced-hover-light); /* 按钮悬停背景颜色 */
 }
 body.dark .btn-advanced:hover {
-  background-color: #60de65;
+  background-color: var(--button-advanced-hover-dark); /* 按钮悬停背景颜色 */
 }
 
 /* 高级设置容器 */

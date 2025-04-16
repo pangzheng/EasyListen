@@ -149,6 +149,7 @@ body.dark #tts-download-btn:hover {
 #tts-play-pause-btn,
 #tts-download-btn {
     width: 25px; /* 宽度 */
+    border-radius: 50%;
     height: 25px; /* 高度 */
     font-size: 12px; /* 字体大小 */
     position: relative; /* 定位方式：绝对定位 */
