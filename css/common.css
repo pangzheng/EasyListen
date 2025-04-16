@@ -61,6 +61,9 @@
    --tooltip-border: 1px solid var(--border-light);
    --tooltip-bg: var(--bg-light);
    --tooltip-fg: var(--fg-light);
+   --scale-factor: 1.2; /* 默认缩放比例，替换 scale(1.5) */
+   --margin-large: 4rem; /* 替换 200px，基于根字体大小 */
+   --margin-small: 2rem; /* 小屏幕边距 */
 }
 
 body {

@@ -1,11 +1,10 @@
 /* options.css */
 body {
-  /*zoom: 60%;  默认值，可调整初始缩放比例 */
   display: flex; /* 使用 Flexbox 居中 */
   justify-content: center; /* 水平居中 */
   align-items: center; /* 垂直居中 */
   margin: 0;
-  padding: 20px; /* 与窗口边缘的间距 */
+  padding: 150px; /* 与窗口边缘的间距 */
   overflow-y: auto; /* 页面滚动 */
 }
 
@@ -25,8 +24,8 @@ body.dark {
   box-sizing: border-box; /* 确保 padding 和 border 不会增加元素的宽度和高度 */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 设置底部水平阴影，偏移量为0、水平偏移4像素、垂直偏移8像素、颜色为半透明黑色 */
   transition: border-color 0.3s, box-shadow 0.3s; /* 边框颜色和阴影在0.3秒内平滑过渡 */
-  transform: scale(1.5); /* 确保容器不会缩放，修正了之前的缩放值 */
-  margin: 200px auto; /* 增加垂直外边距为50像素，并使用auto使左右两侧自动对齐，实现水平居中 */
+  transform: scale(1.3); /* 确保容器不会缩放，修正了之前的缩放值 */
+  transform-origin: center; /* 设置缩放的原点为容器的中心 */
 }
 body.light .container {
   border-color: var(--border-light);
@@ -46,6 +45,18 @@ h2 {
 label {
   display: block;
   margin-bottom: 5px;
+  display: inline-block;
+}
+
+/* 高级设置容器 */
+.advanced-settings {
+  width: 100%;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+}
+.advanced-settings.show {
+  max-height: 600px; /* 足够容纳所有内容，实际高度由内容决定 */
 }
 
 /* 下拉菜单特定样式 */
@@ -69,10 +80,7 @@ body.dark input[type="range"] {
   background-color: transparent;
 }
 
-/* 标签和提示图标的对齐 */
-label {
-  display: inline-block;
-}
+/* 输入组 */
 .input-group {
   flex-direction: column;
   margin: 10px 0;
@@ -159,7 +167,7 @@ body.dark small {
   opacity: 1;
 }
 
-/* 输入框 */
+/* API输入框 */
 #api-url,
 #api-key {
   width: 100%;
@@ -212,18 +220,19 @@ body.dark .version {
   display: inline-block; /* 将元素设置为内联块级元素，以便可以设置宽度和高度 */
   vertical-align: middle; /* 使元素垂直对齐到父元素的中间位置 */
   margin-left: auto; /* 根据需要设置左边距 */
-  width: 16px;  /* 设置元素的宽度 */
-  height: 16px; /* 设置元素的高度 */
+  width: 14px;  /* 设置元素的宽度 */
+  height: 14px; /* 设置元素的高度 */
   border-radius: var(--border-radius-circle); /* 将元素设置为圆形 */
   font-size: 12px; /* 设置字体大小 */
   font-weight: bold; /* 设置字体加粗 */
-  text-align: center; /* 设置文本居中 */
-  line-height: 16px; /* 确保叹号垂直居中 */
+  text-align: center; /* 设置文本水平居中 */
+  line-height: 14px; /* 确保叹号垂直居中 */
   cursor: help; /* 鼠标悬停显示帮助光标 */
   position: relative; /* 用于定位提示框 */
   transition: background-color 0.3s, color 0.3s; /* 颜色过渡效果，使颜色变化更平滑 */
-  transform: scale(0.7); /*  例如，缩小到 70% */
+  transform: scale(1); /*  例如，缩小到 70% */
   color: var(--font-color-dark); /* 白色叹号 */
+  top: -2px; /* 将图标向上移动一些，确保与文字对齐 */
 }
 body.light .tooltip-icon {
   background-color: var(--tooltip-icon-light); /* 蓝色背景 */
@@ -232,7 +241,7 @@ body.dark .tooltip-icon {
   background-color: var(--tooltip-icon-dark); /* 蓝色背景 */
 }
 
-/* 提示框基础样式 */
+/* 提示弹出框基础样式 */
 .tooltip-icon::after {
   content: attr(data-tooltip); /* 显示 data-tooltip 属性的值作为提示内容 */
   position: absolute; /* 绝对定位 */
@@ -271,38 +280,29 @@ body.dark .tooltip-icon::after {
   color: var(--fg-dark);
   border-color: var(--border-dark);
 }
-
-/* 鼠标悬停时显示 */
 .tooltip-icon:hover::after {
-  opacity: 1;
+  opacity: 1; /* 鼠标悬停时显示 */
 }
-
-/* 边界处理类：左侧对齐 */
 .tooltip-icon.tooltip-left::after {
-  left: 0;
+  left: 0; /* 边界处理类：左侧对齐 */
   transform: none; /* 取消居中 */
 }
-
-/* 边界处理类：右侧对齐 */
 .tooltip-icon.tooltip-right::after {
-  right: 0;
+  right: 0; /* 边界处理类：右侧对齐 */
   left: auto;
   transform: none; /* 取消居中 */
 }
-
-/* 边界处理类：向上显示 */
 .tooltip-icon.tooltip-top::after {
-  top: auto;
+  top: auto; /* 边界处理类：向上显示 */
   bottom: 100%; /* 显示在图标上方 */
   left: 50%;
   transform: translateX(-50%);
 }
-
-/* 可选：超高提示框启用滚动 */
 .tooltip-icon.tooltip-scroll::after {
   max-height: 150px; /* 限制最大高度 */
   overflow-y: auto; /* 启用垂直滚动 */
 }
+
 
 /* 高级按钮 */
 .btn-advanced {
@@ -329,13 +329,4 @@ body.dark .btn-advanced:hover {
   background-color: var(--button-advanced-hover-dark); /* 按钮悬停背景颜色 */
 }
 
-/* 高级设置容器 */
-.advanced-settings {
-  width: 100%;
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease-out;
-}
-.advanced-settings.show {
-  max-height: 600px; /* 足够容纳所有内容，实际高度由内容决定 */
-}
+
