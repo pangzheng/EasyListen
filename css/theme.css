@@ -1,0 +1,71 @@
+/* theme.css */
+body.light {
+    background-color: var(--bg-light);
+    color: var(--fg-light);
+  }
+  
+  body.dark {
+    background-color: var(--bg-dark);
+    color: var(--fg-dark);
+  }
+  
+  /* Select styles */
+  body.light select {
+    background-color: var(--bg-light);
+    color: var(--fg-light);
+    border-color: var(--border-light);
+  }
+  
+  body.dark select {
+    background-color: var(--bg-dark);
+    color: var(--fg-dark);
+    border-color: var(--border-dark);
+  }
+  
+  body.light select:hover {
+    background-color: var(--hover-light);
+  }
+  
+  body.dark select:hover {
+    background-color: var(--hover-dark);
+  }
+  
+  body.light select option {
+    background-color: var(--bg-light);
+    color: var(--fg-light);
+  }
+  
+  body.dark select option {
+    background-color: var(--bg-dark);
+    color: var(--fg-dark);
+  }
+  
+  /* Button styles */
+  body.light button {
+    background-color: var(--bg-light);
+    border-color: var(--border-light);
+  }
+  
+  body.dark button {
+    background-color: var(--bg-dark);
+    border-color: var(--border-dark);
+  }
+  
+  body.light button:hover {
+    background-color: var(--hover-light);
+  }
+  
+  body.dark button:hover {
+    background-color: var(--hover-dark);
+  }
+  
+  /* Input styles */
+  body.light input {
+    background-color: var(--bg-light);
+    border-color: var(--border-light);
+  }
+  
+  body.dark input {
+    background-color: var(--bg-dark);
+    border-color: var(--border-dark);
+  }

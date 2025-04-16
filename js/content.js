@@ -3,7 +3,6 @@ let abortController = null; // 用于取消 fetch 请求
 let totalSegments = 0; // 全局存储 totalSegments
 let isFrontPage = true; // 跟踪当前页面（正/反）
 
-
 // 初始化主题
 window.getStorageData(['theme']).then((result) => {
   const theme = result.theme || 'light'; // 默认 light 主题
@@ -29,6 +28,12 @@ function createFloatingUI() {
   link.href = chrome.runtime.getURL('css/content.css'); // 扩展内的相对路径
   link.onerror = () => console.error('无法加载 content.css，请检查路径或文件内容');
   document.head.appendChild(link);
+
+  const linkTheme = document.createElement('link');
+  linkTheme.rel = 'stylesheet';
+  linkTheme.href = chrome.runtime.getURL('css/theme.css'); // 加载主题样式
+  linkTheme.onerror = () => console.error('无法加载 theme.css，请检查路径或文件内容');
+  document.head.appendChild(linkTheme);
 
   // 创建 UI 容器
   const ui = document.createElement('div');
