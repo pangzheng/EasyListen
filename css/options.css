@@ -1,0 +1,295 @@
+/* options.css */
+body {
+  zoom: 60%; /* 默认值，可调整初始缩放比例 */
+  display: flex; /* 使用 Flexbox 居中 */
+  justify-content: center; /* 水平居中 */
+  align-items: center; /* 垂直居中 */
+  margin: 0;
+  padding: 20px; /* 与窗口边缘的间距 */
+  overflow-y: auto; /* 页面滚动 */
+}
+
+/* 容器 */
+.container {
+  max-width: 350px; /* 可调节宽度 */
+  width: 100%;
+  padding: 20px;
+  border: 2px solid var(--border-light); /* 默认边框 */
+  border-radius: 8px;
+  box-sizing: border-box;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+body.light .container {
+  border-color: var(--border-light);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+body.dark .container {
+  border-color: var(--border-dark);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* 标题 */
+h2 {
+  margin-bottom: 10px;
+}
+
+/* 标签 */
+label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+/* 下拉菜单特定样式 */
+select {
+  width: 100%;
+  max-width: 300px;
+}
+
+/* 滑块 */
+input[type="range"] {
+  width: 100%;
+  max-width: 300px;
+  padding: 5px 0;
+  border: none;
+  cursor: pointer;
+}
+body.light input[type="range"] {
+  background-color: transparent;
+}
+body.dark input[type="range"] {
+  background-color: transparent;
+}
+
+/* 标签和提示图标的对齐 */
+label {
+  display: inline-block;
+}
+.input-group {
+  flex-direction: column;
+  margin: 10px 0;
+}
+.input-group span.tooltip-icon {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* 滑块容器 */
+.slider-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#rate-slider,
+#split-slider {
+  width: 260px;
+}
+
+/* 绿色按钮 */
+.btn-green {
+  border-color: transparent;
+}
+body.light .btn-green {
+  background-color: #4CAF50;
+  color: white;
+}
+body.dark .btn-green {
+  background-color: #2833a7;
+  color: white;
+}
+body.light .btn-green:hover {
+  background-color: #45a049;
+}
+body.dark .btn-green:hover {
+  background-color: #1e2a7b;
+}
+
+/* 红色按钮 */
+.btn-secondary {
+  border-color: transparent;
+}
+body.light .btn-secondary {
+  background-color: #f6675a;
+  color: white;
+}
+body.dark .btn-secondary {
+  background-color: #f44336;
+  color: white;
+}
+body.light .btn-secondary:hover {
+  background-color: #e55a4e;
+}
+body.dark .btn-secondary:hover {
+  background-color: #da190b;
+}
+
+/* 小文本 */
+small {
+  display: block;
+  margin-top: 5px;
+}
+body.light small {
+  color: #666666;
+}
+body.dark small {
+  color: #cccccc;
+}
+
+/* 保存提示 */
+#save-message {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+  z-index: 1000;
+}
+#save-message.show {
+  opacity: 1;
+}
+
+/* 输入框 */
+#api-url,
+#api-key {
+  width: 100%;
+  max-width: 300px; /* 最大宽度限制，避免过宽 */
+  box-sizing: border-box; /* 确保 padding 和 border 不增加总宽度 */
+  padding: 8px;
+  border: 1px solid;
+  border-radius: 4px;
+  margin-top: 5px;
+  color: inherit;
+  background-color: var(--bg-light);
+}
+body.light #api-url,
+body.light #api-key {
+  border-color: var(--border-light);
+}
+body.dark #api-url,
+body.dark #api-key {
+  background-color: var(--bg-dark);
+  border-color: var(--border-dark);
+}
+#api-url::placeholder,
+#api-key::placeholder {
+  color: var(--placeholder-color-light);
+}
+body.dark #api-url::placeholder,
+body.dark #api-key::placeholder {
+  color: var(--placeholder-color-dark);
+}
+#api-url:focus,
+#api-key:focus {
+  outline: none;
+  border-color: var(--accent-color, #007bff);
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}
+
+/* 版本号 */
+.version {
+  font-size: 12px;
+  color: var(--fg-light);
+  text-align: center;
+  margin-top: 10px;
+}
+body.dark .version {
+  color: var(--fg-dark);
+}
+
+/* 提示图标 */
+.tooltip-icon {
+  display: inline-block; /* 将元素设置为内联块级元素，以便可以设置宽度和高度 */
+  vertical-align: middle; /* 使元素垂直对齐到父元素的中间位置 */
+  margin-left: auto; /* 根据需要设置左边距 */
+  width: 16px;  /* 设置元素的宽度 */
+  height: 16px; /* 设置元素的高度 */
+  border-radius: 50%; /* 将元素设置为圆形 */
+  font-size: 12px; /* 设置字体大小 */
+  font-weight: bold; /* 设置字体加粗 */
+  text-align: center; /* 设置文本居中 */
+  line-height: 16px; /* 确保叹号垂直居中 */
+  cursor: help; /* 鼠标悬停显示帮助光标 */
+  position: relative; /* 用于定位提示框 */
+  transition: background-color 0.3s, color 0.3s; /* 颜色过渡效果，使颜色变化更平滑 */
+  transform: scale(0.7); /*  例如，缩小到 70% */
+}
+body.light .tooltip-icon {
+  background-color: #007bff; /* 蓝色背景 */
+  color: #ffffff; /* 白色叹号 */
+}
+body.dark .tooltip-icon {
+  background-color: #17a2b8; /* 青色背景 */
+  color: #ffffff; /* 白色叹号 */
+}
+/* 提示框 */
+.tooltip-icon::after {
+  content: attr(data-tooltip); /* 使用 data-tooltip 的内容 */
+  position: absolute;
+  top: 100%; /* 显示在图标下方 */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--bg-light);
+  color: var(--fg-light);
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid var(--border-light);
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 1000;
+}
+body.dark .tooltip-icon::after {
+  background-color: var(--bg-dark);
+  color: var(--fg-dark);
+  border-color: var(--border-dark);
+}
+/* 鼠标悬停时显示提示框 */
+.tooltip-icon:hover::after {
+  opacity: 1;
+}
+
+/* 高级按钮 */
+.btn-advanced {
+  width: 100%;
+  max-width: 300px;
+  padding: 8px;
+  border: 1px solid;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+body.light .btn-advanced {
+  background-color: #2833a7;
+  color: white;
+  border-color: var(--border-light);
+}
+body.dark .btn-advanced {
+  background-color: #4CAF50;
+  color: white;
+  border-color: var(--border-dark);
+}
+body.light .btn-advanced:hover {
+  background-color: #303cc7;
+}
+body.dark .btn-advanced:hover {
+  background-color: #60de65;
+}
+
+/* 高级设置容器 */
+.advanced-settings {
+  width: 100%;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+}
+.advanced-settings.show {
+  max-height: 600px; /* 足够容纳所有内容，实际高度由内容决定 */
+}

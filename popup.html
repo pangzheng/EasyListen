@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>EasySpeak</title>
+  <link rel="stylesheet" href="./css/common.css">
+  <link rel="stylesheet" href="./css/popup.css">
+</head>
+<body class="dark">
+  <div class="button-group">
+    <h2 data-i18n="title">Text to Speech</h2>
+    <button id="themeBtn">Light</button>
+    <button id="settings-btn" data-i18n="settings">Settings</button>
+    <button id="lang-toggle" class="btn btn-secondary">中文</button>
+  </div>
+
+  <textarea id="text-area" data-i18n="placeholder" placeholder="Page content will appear here"></textarea>
+  <button id="generate-btn" data-i18n="generate">Generate</button>
+  <div class="version" id="version-display" data-i18n="version">Version</div>
+
+  <script src="./js/func.js"></script>
+  <script src="./js/i18n.js"></script>
+  <script src="./js/audio.js"></script>
+  <script src="./js/content.js"></script>
+  <script src="./js/ui.js"></script>
+</body>
+</html>

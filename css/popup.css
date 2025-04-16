@@ -1,0 +1,156 @@
+/* popup.css */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  width: 400px;
+  padding: 10px;
+  line-height: 1.6;
+}
+
+/* 按钮组 */
+.button-group {
+  display: flex;
+  justify-content: right;
+  gap: 10px; /* 按钮间距 */
+  flex-wrap: wrap; /* 小屏幕下允许换行 */
+  margin-bottom: 10px;
+}
+
+/* 让 h2 占据左侧，将后面的按钮推到右侧 */
+.button-group h2 {
+  margin-right: auto; 
+  font-size: 1.5rem;
+}
+
+/* 顶部按钮 */
+#themeBtn,
+#lang-toggle,
+#settings-btn {
+  padding: 5px 15px; /* 内边距，上下 5px，左右 20px */
+  border: 1px solid; /* 边框样式 */
+  border-radius: 4px; /* 圆角 */
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
+/*主题按钮*/
+body.light #lang-toggle,
+body.light #themeBtn,
+body.light #settings-btn {
+  background-color: #4CAF50;
+  color: white;
+  border-color: var(--border-light);
+}
+body.dark #lang-toggle,
+body.dark #themeBtn,
+body.dark #settings-btn {
+  background-color: #2833a7;
+  color: white;
+  border-color: var(--border-dark);
+}
+body.light #lang-toggle:hover,
+body.light #themeBtn:hover,
+body.light #settings-btn:hover {
+  background-color: #60de65;
+}
+body.dark #lang-toggle:hover,
+body.dark #themeBtn:hover,
+body.dark #settings-btn:hover {
+  background-color: #303cc7;
+}
+
+
+/* 文本区域 */
+textarea {
+  width: 100%;
+  height: 200px;
+  margin: 10px 0;
+  min-height: 100px;
+  padding: 12px;
+  border: 1px solid;
+  border-radius: 4px;
+  resize: vertical;
+  font-size: 1rem;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+body.light textarea {
+  background-color: var(--bg-light);
+  color: var(--fg-light);
+  border-color: var(--border-light);
+}
+body.dark textarea {
+  background-color: var(--bg-dark);
+  color: var(--fg-dark);
+  border-color: var(--border-dark);
+}
+
+/* 生成按钮 */
+#generate-btn {
+  width: 50px;        /* 按钮宽度 */
+  height: 50px;       /* 按钮高度 */
+  border-radius: 50%; /* 添加圆角实现圆形 */
+  padding: 0;         /* 移除内边距让按钮更紧凑 */
+  display: block;     /* 使用块级元素便于居中 */
+  left: 50%;          /* 横向居中 */
+  font-size: 15px;    /* 调整字体大小 */
+  font-weight: bold; /* 设置字体加粗 */
+  line-height: auto;  /* 垂直文字居中对齐 */
+  margin: 10px auto;
+}
+body.light #generate-btn {
+  background-color: #2833a7;
+  color: white;
+}
+body.dark #generate-btn {
+  background-color: #4CAF50;
+  color: white;
+}
+body.light #generate-btn:hover {
+  background-color: #303cc7;
+}
+body.dark #generate-btn:hover {
+  background-color: #60de65;
+}
+
+/* 版本号 */
+.version {
+  font-size: 12px;
+  color: var(--fg-light);
+  text-align: center;
+  margin-top: 10px;
+}
+
+body.dark .version {
+  color: var(--fg-dark);
+}
+
+/* 输出组 */
+#output-group {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* 时间显示 */
+#time-display {
+  font-size: 14px;
+}
+
+/* 播放和下载按钮 */
+#play-pause-btn,
+#download-btn {
+  font-size: 20px;
+  padding: 5px 10px;
+}
+
+/* 下载按钮 */
+#download-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

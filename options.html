@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>EasyListen</title>
+    <!-- 添加图标 -->
+    <link rel="icon" type="image/x-icon" href="/icons/ting.svg">
+    <!-- 示例图标容器 -->
+    <div class="icon"></div>
+    <link rel="stylesheet" href="./css/common.css">
+    <link rel="stylesheet" href="./css/options.css">
+  </head>
+
+  <body>
+    <div class="container">
+      <h1 data-i18n="settingsTitle">EasyListen</h1>
+      <h2 data-i18n="settings">Settings</h2>
+
+      <div class="input-group">
+        <label for="language" data-i18n="language">Language</label>
+        <span class="tooltip-icon" data-tooltip-i18n="languageTooltip" style="display: inline-block;">!</span>
+        <select id="language">
+          <option value="en" data-i18n="langEnglish">English</option>
+          <option value="zh" data-i18n="langChinese">中文</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label for="voices" data-i18n="voice" >Voice</label>
+        <span class="tooltip-icon" data-tooltip-i18n="voiceTooltip">!</span>
+        <select id="voices">
+          <option value="zh-CN-XiaoxiaoNeural" data-i18n="xiaoxiao">Xiaoxiao</option>
+          <option value="zh-CN-XiaoyiNeural" data-i18n="xiaoyi">Xiaoyi</option>
+          <option value="zh-CN-YunjianNeural" selected data-i18n="yunjian">Yunjian</option>
+          <option value="zh-CN-YunxiNeural" data-i18n="yunxi">Yunxi</option>
+          <option value="zh-CN-YunxiaNeural" data-i18n="yunxia">Yunxia</option>
+          <option value="zh-CN-YunyangNeural" data-i18n="yunyang">Yunyang</option>
+          <option value="zh-CN-liaoning-XiaobeiNeural" data-i18n="xiaobei">Xiaobei (Liaoning)</option>
+          <option value="zh-CN-shaanxi-XiaoniNeural" data-i18n="xiaoni">Xiaoni (Shaanxi)</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label data-i18n="preview">Preview</label>
+        <span class="tooltip-icon" data-tooltip-i18n="previewTooltip" style="display: inline-block;">!</span>
+        <div class="button-group">
+          <button id="play-example" class="btn btn-green" data-i18n="play">Play</button>
+          <button id="stop-example" class="btn btn-secondary" data-i18n="stop">Stop</button>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <button id="advanced-toggle" class="btn btn-advanced" data-i18n="advancedSettings">Advanced Settings</button>
+      </div>
+
+      <div id="advanced-settings" class="advanced-settings">
+        <div class="input-group">
+          <label for="format" data-i18n="outputFormat">Output Format</label>
+          <span class="tooltip-icon" data-tooltip-i18n="formatTooltip" style="display: inline-block;">!</span>
+          <select id="format">
+            <option value="mp3">MP3</option>
+            <option value="wav">WAV</option>
+            <option value="aac">AAC</option>
+            <option value="ogg">OGG</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label for="rate-slider" data-i18n="speedAdjustment">Speed Adjustment</label>
+          <span class="tooltip-icon" data-tooltip-i18n="speedTooltip" style="display: inline-block;">!</span>
+          <div class="slider-container">
+            <input type="range" id="rate-slider" min="-100" max="100" value="0" step="10" class="slider">
+            <span id="rate-value">0%</span>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="split-slider" data-i18n="splitLength">Split Length</label>
+          <span class="tooltip-icon" data-tooltip-i18n="splitTooltip" style="display: inline-block;">!</span>
+          <div class="slider-container">
+            <input type="range" id="split-slider" min="100" max="500" value="100" step="50">
+            <span id="split-value">200</span>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="concurrency" data-i18n="concurrency">Concurrency</label>
+          <span class="tooltip-icon" data-tooltip-i18n="concurrencyTooltip" style="display: inline-block;">!</span>
+          <select id="concurrency">
+            <option value="1">1</option>
+            <option value="2">2</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label for="api-url" data-i18n="apiUrl">API URL</label>
+          <span class="tooltip-icon" data-tooltip-i18n="apiUrlTooltip" style="display: inline-block;">!</span>
+          <input type="text" id="api-url" placeholder="Ex:http://localhost/v1/audio/speech">
+        </div>
+
+        <div class="input-group">
+          <label for="api-key" data-i18n="apiKey">API Key</label>
+          <span class="tooltip-icon" data-tooltip-i18n="apiKeyTooltip" style="display: inline-block;">!</span>
+          <input type="text" id="api-key" placeholder="Enter API Key">
+        </div>
+        
+        <div id="save-message" data-i18n="saveSuccess">Settings saved!</div>
+      </div>
+      <div class="version" id="version-display" data-i18n="version">Version</div>
+    </div>
+    <script src="./js/func.js"></script>
+    <script src="./js/i18n.js"></script>
+    <script src="./js/options.js"></script>
+  </body>
+</html>

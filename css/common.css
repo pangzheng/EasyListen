@@ -1,0 +1,106 @@
+/* common.css */
+:root {
+  /* 浅色主题 */
+  --bg-light: #ffffff;
+  --fg-light: #000000;
+  --border-light: #dddddd;
+  --hover-light: #f0f0f0;
+  /* 深色主题 */
+  --bg-dark: #333333;
+  --fg-dark: #ffffff;
+  --border-dark: #555555;
+  --hover-dark: #555555;
+  /* 额外变量 */
+  --placeholder-color: #888;
+  --placeholder-color-light: #666;
+  --placeholder-color-dark: #aaa;
+}
+
+body {
+  margin: 0;
+  padding: 20px; /* 默认间距 */
+  overflow-y: auto; /* 页面滚动 */
+}
+body.light {
+  background-color: var(--bg-light);
+  color: var(--fg-light);
+}
+body.dark {
+  background-color: var(--bg-dark);
+  color: var(--fg-dark);
+}
+
+/* 下拉菜单样式 */
+select {
+  padding: 5px 24px 5px 5px;
+  border: 1px solid;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="5" viewBox="0 0 10 5"><path fill="currentColor" d="M0 0h10L5 5z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
+input,
+select {
+  color: inherit;
+}
+input::placeholder {
+  color: var(--placeholder-color);
+  opacity: 1;
+}
+body.light select {
+  background-color: var(--bg-light);
+  color: var(--fg-light);
+  border-color: var(--border-light);
+}
+body.dark select {
+  background-color: var(--bg-dark);
+  color: var(--fg-dark);
+  border-color: var(--border-dark);
+}
+body.light select:hover {
+  background-color: var(--hover-light);
+}
+body.dark select:hover {
+  background-color: var(--hover-dark);
+}
+body.light select option {
+  background-color: var(--bg-light);
+  color: var(--fg-light);
+}
+body.dark select option {
+  background-color: var(--bg-dark);
+  color: var(--fg-dark);
+}
+
+/* 按钮基础样式 */
+button {
+  padding: 5px 10px;
+  border: 1px solid;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+body.light button {
+  background-color: var(--bg-light);
+  color: var(--fg-light);
+  border-color: var(--border-light);
+}
+body.dark button {
+  background-color: var(--bg-dark);
+  color: var(--fg-dark);
+  border-color: var(--border-dark);
+}
+body.light button:hover {
+  background-color: var(--hover-light);
+}
+body.dark button:hover {
+  background-color: var(--hover-dark);
+}
