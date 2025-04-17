@@ -278,7 +278,7 @@ elements.ttsCloseBtn.addEventListener('click', () => {
   // 暂停音频播放
   window.audioPlayer.pause();
   // 更新按钮文本为播放符号
-  elements.ttsPlayPauseBtn.textContent = '▶️';
+  elements.ttsPlayPauseBtn.textContent = '▶';
   // 设置为未播放状态
   window.isPlaying = false;
   // 清空 audioPlayer 的 src 属性
