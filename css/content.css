@@ -92,8 +92,10 @@
     align-items: center; /* 垂直居中对齐 */
     gap: 20px; /* 元素之间的间隔 */
 }
-/* 时间字体设置 */
-#tts-time-display {
+/* 时间和分片字体设置 */
+#tts-time-display,
+#tts-segment-display
+ {
     font-size: 12px; /* 字体大小 */
     color: #333; /* 文本颜色 */
 }
@@ -101,11 +103,6 @@
 #tts-back-page > * {
     transform: rotateY(180deg); /* 设置初始旋转角度为 180 度 */
     transform-origin: center; /* 明确旋转中心 */
-}
-/* 分片字体设置 */
-#tts-segment-display {
-    font-size: 12px; /* 字体大小 */
-    color: #333; /* 文本颜色 */
 }
 
 /* 关闭按钮 */

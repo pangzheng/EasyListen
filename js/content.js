@@ -1,4 +1,3 @@
-let currentText = ''; // 保存当前文本用于统计
 let abortController = null; // 用于取消 fetch 请求
 let totalSegments = 0; // 全局存储 totalSegments
 let isFrontPage = true; // 跟踪当前页面（正/反）
@@ -296,7 +295,6 @@ elements.ttsCloseBtn.addEventListener('click', () => {
   window.totalCachedDuration = 0;
   // 禁用下载按钮
   elements.ttsDownloadBtn.disabled = true;
-  currentText = ''; // 清理文本
   totalSegments = 0; // 重置 totalSegments
   // 重置时间显示
   document.getElementById('tts-time-display').textContent = '00:00:00 / 00:00:00';
@@ -316,4 +314,3 @@ window.audioPlayer.ontimeupdate = async () => {
 
 // 设置音频播放结束的回调函数
 window.audioPlayer.onended = window.handleAudioEnded;
-window.currentText = currentText; // 暴露当前文本用于统计
