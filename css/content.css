@@ -68,7 +68,6 @@
     transform: rotateY(0deg);
     transition: transform 0.3s ease;
 }
-
 #tts-flip-container.back {
     transform: rotateY(180deg);
     transition: transform 0.3s ease;
@@ -77,15 +76,12 @@
 #tts-flip-container.front #tts-front-page {
     display: flex;
 }
-
 #tts-flip-container.back #tts-front-page {
     display: none;
 }
-
 #tts-flip-container.front #tts-back-page {
     display: none;
 }
-
 #tts-flip-container.back #tts-back-page {
     display: flex;
 }
