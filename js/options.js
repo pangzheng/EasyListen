@@ -416,5 +416,5 @@ document.addEventListener('DOMContentLoaded', async () => {
     chrome.storage.onChanged.removeListener(handleStorageChange);
     console.log('options.js: Cleaned up event listeners');
   };
-  window.tts_addEventListener('unload', cleanup);
+  window.addEventListener('unload', cleanup);
 });

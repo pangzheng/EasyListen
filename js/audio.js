@@ -4,6 +4,42 @@ let currentSegmentIndex = 0;
 let totalCachedDuration = 0;
 let isPlaying = false;
 
+// 检测 CSP 是否阻止 blob: URL
+async function checkCSPSupportForBlob(blob = null) {
+  return new Promise((resolve) => {
+    try {
+      // 如果提供了实际的 blob，使用它进行测试；否则创建一个小的测试 blob
+      const testBlob = blob || new Blob([new Uint8Array(2048)], { type: 'audio/mpeg' });
+      const testUrl = URL.createObjectURL(testBlob);
+      const testAudio = new Audio(testUrl);
+
+      testAudio.onloadedmetadata = () => {
+        URL.revokeObjectURL(testUrl);
+        resolve(true); // CSP 允许 blob:
+      };
+
+      testAudio.onerror = () => {
+        console.warn('CSP test audio error:', testAudio.error?.message || 'Unknown error', testAudio.error);
+        // 显示错误通知给用户
+        alert('The website\'s security settings do not support this plugin. Please try with another website.');
+        // 隐藏浮动 UI 元素
+        floatingUI.style.display = 'none';
+        URL.revokeObjectURL(testUrl);
+        resolve(false); // CSP 可能阻止了 blob:
+      };
+
+      // 增加超时时间，防止误判
+      setTimeout(() => {
+        URL.revokeObjectURL(testUrl);
+        resolve(false); // 超时，假设 CSP 阻止
+      }, 3000); // 延长到 3 秒
+    } catch (error) {
+      console.error('CSP check failed:', error);
+      resolve(false); // 异常情况，假设 CSP 阻止
+    }
+  });
+}
+
 // 获取单个音频分片
 async function fetchAudioSegment(segment, voice, speed, format, index, signal) {
   try {
@@ -24,6 +60,7 @@ async function fetchAudioSegment(segment, voice, speed, format, index, signal) {
         ...(settings?.openai || {})
       }
     };
+
     const { apiUrl, apiKey } = effectiveSettings.openai;
 
     // 验证 apiUrl 和 apiKey
@@ -55,6 +92,19 @@ async function fetchAudioSegment(segment, voice, speed, format, index, signal) {
     
     // 获取响应的二进制数据
     const blob = await response.blob();
+  
+    // 验证 blob 数据
+    if (blob.size === 0 || !blob.type.startsWith('audio/')) {
+      throw new Error(`Invalid audio blob for segment ${index}: size=${blob.size}, type=${blob.type}`);
+    }
+    console.log(`Segment ${index} blob:`, { size: blob.size, type: blob.type });
+    
+    // 检查 CSP 是否支持 blob:，使用实际的音频 blob
+    const isBlobSupported = await checkCSPSupportForBlob(blob);
+    if (!isBlobSupported) {
+      throw new Error('cspBlocked');
+    }
+    
     // 创建临时音频对象
     const tempAudio = new Audio(URL.createObjectURL(blob));
     // 获取音频时长（秒）
@@ -64,6 +114,7 @@ async function fetchAudioSegment(segment, voice, speed, format, index, signal) {
     });
 
     const duration = Math.floor(tempAudio.duration);
+
     // 累加总时长（秒）
     totalCachedDuration += duration;
     
