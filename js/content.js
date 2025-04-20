@@ -3,7 +3,7 @@ let totalSegments = 0; // 全局存储 totalSegments
 let isFrontPage = true; // 跟踪当前页面（正/反）
 
 // 初始化主题
-window.getStorageData(['theme']).then((result) => {
+window.tts_getStorageData(['theme']).then((result) => {
   const theme = result.theme || 'light'; // 默认 light 主题
   document.body.classList.add(theme); // 添加 light 或 dark 类
   console.log(`Applied theme: ${theme}`); // 调试日志
@@ -13,7 +13,7 @@ window.getStorageData(['theme']).then((result) => {
 });
 
 // 确保 func.js 的函数可用
-if (!window.getStorageData) {
+if (!window.tts_getStorageData) {
   console.error('getStorageData not found. Ensure func.js is loaded.');
 }
 /**
@@ -101,7 +101,7 @@ function splitText(text, maxLength) {
     }
 
     // 将从起始位置到结束位置的文本（去除首尾空格后）添加到段落数组中
-    segments.push(window.filterTextForTTS(text.slice(start, end).trim()));
+    segments.push(window.tts_filterTextForTTS(text.slice(start, end).trim()));
 
     // 更新起始位置为当前段落结束位置加1
     start = end + 1;
@@ -111,10 +111,7 @@ function splitText(text, maxLength) {
   return segments;
 }
 
-// 清洗数据，过滤非文字字符，仅保留字母、数字和基本字符
-function filterTextForTTS(text) {
-  return text.replace(/[^a-zA-Z0-9\u4e00-\u9fa5\s]/g, '');
-}
+
 
 // 监听 sendMessage 的消息监听器
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -152,8 +149,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     totalSegments = segments.length; // 计算总分段数
 
     // 调用 window 的 fetchSegmentsSerially 函数，按序列获取 segments 中的音频片段
-    window.fetchSegmentsSerially(segments, voice, speed, format, concurrency, abortController.signal).then(() => {
-      window.updateTimeAndProgress(totalSegments);
+    window.tts_fetchSegmentsSerially(segments, voice, speed, format, concurrency, abortController.signal).then(() => {
+      window.tts_updateTimeAndProgress(totalSegments);
     }).catch((error) => {
       if (error.name === 'AbortError') {
         console.log('Fetch aborted');
@@ -181,37 +178,37 @@ const elements = {
 // 监听播放暂停按钮的状态
 elements.ttsPlayPauseBtn.addEventListener('click', () => {
   // 如果没有生成音频，请先生成音频
-  if (window.audioBuffer.length === 0) {
-    window.showErrorNotification('noAudioGenerated');
+  if (window.tts_audioBuffer.length === 0) {
+    window.tts_showErrorNotification('noAudioGenerated');
     return;
   }
 
   // 检查 audioPlayer 是否有有效的 src
-  if (!window.audioPlayer.src || window.audioPlayer.readyState === 0) {
+  if (!window.tts_audioPlayer.src || window.tts_audioPlayer.readyState === 0) {
     // 如果没有 src 或音频未加载，尝试加载第一个片段
-    if (window.audioBuffer[window.currentSegmentIndex]) {
-      window.audioPlayer.src = window.audioBuffer[window.currentSegmentIndex].url;
+    if (window.tts_audioBuffer[window.tts_currentSegmentIndex]) {
+      window.tts_audioPlayer.src = window.tts_audioBuffer[window.tts_currentSegmentIndex].url;
     } else {
       console.error('No valid audio segment available');
-      window.showErrorNotification('noAudioAvailable');
+      window.tts_showErrorNotification('noAudioAvailable');
       return;
     }
   }
 
   // 如果当前不是播放状态
-  if (!window.isPlaying) {
-    window.audioPlayer.play().then(() => {
+  if (!window.tts_isPlaying) {
+    window.tts_audioPlayer.play().then(() => {
       elements.ttsPlayPauseBtn.textContent = '⏸';
-      window.isPlaying = true;
+      window.tts_isPlaying = true;
     })
     .catch(error => {
       console.error('Failed to play audio:', error);
-      window.showErrorNotification('playAudioFailed');
+      window.tts_showErrorNotification('playAudioFailed');
     });
   } else {
-    window.audioPlayer.pause();
+    window.tts_audioPlayer.pause();
     elements.ttsPlayPauseBtn.textContent = '▶';
-    window.isPlaying = false;
+    window.tts_isPlaying = false;
   }
 });
 
@@ -224,15 +221,15 @@ elements.ttsDownloadBtn.addEventListener('click', async () => {
   const format = settings.format;
 
   // 检查 audioBuffer 是否有内容
-  if (window.audioBuffer.length === 0 || !window.audioBuffer.every(item => item.blob instanceof Blob)) {
-    window.showErrorNotification('noAudioToDownload');
+  if (window.tts_audioBuffer.length === 0 || !window.tts_audioBuffer.every(item => item.blob instanceof Blob)) {
+    window.tts_showErrorNotification('noAudioToDownload');
     return;
   }
   
   try {
     // 获取所有音频片段的 Blob 对象
   
-    const blobs = window.audioBuffer.map(item => item.blob);
+    const blobs = window.tts_audioBuffer.map(item => item.blob);
     // 合并所有的音频片段为一个 Blob 对象
     const mergedBlob = new Blob(blobs, { type: `audio/${format}` });
 
@@ -252,10 +249,10 @@ elements.ttsDownloadBtn.addEventListener('click', async () => {
     // 回收临时 URL
     URL.revokeObjectURL(url);
     // 清除 audioBuffer 中的 blob
-    window.audioBuffer.forEach(item => delete item.blob);
+    window.tts_audioBuffer.forEach(item => delete item.blob);
   } catch (error) {
     console.error('Failed to generate downloadable audio:', error);
-    window.showErrorNotification('downloadAudioFailed');
+    window.tts_showErrorNotification('downloadAudioFailed');
   }
 });
 
@@ -276,23 +273,23 @@ elements.ttsCloseBtn.addEventListener('click', () => {
   // 隐藏浮动 UI 元素
   floatingUI.style.display = 'none';
   // 暂停音频播放
-  window.audioPlayer.pause();
+  window.tts_audioPlayer.pause();
   // 更新按钮文本为播放符号
   elements.ttsPlayPauseBtn.textContent = '▶';
   // 设置为未播放状态
-  window.isPlaying = false;
+  window.tts_isPlaying = false;
   // 清空 audioPlayer 的 src 属性
-  window.audioPlayer.src = '';
+  window.tts_audioPlayer.src = '';
   // 回收所有音频片段的 URL
-  window.audioBuffer.forEach(item => URL.revokeObjectURL(item.url));
+  window.tts_audioBuffer.forEach(item => URL.revokeObjectURL(item.url));
   // 清空 audioBuffer 数组
-  window.audioBuffer.length = 0;
+  window.tts_audioBuffer.length = 0;
   // 清除 audioBuffer 中的 blob
-  window.audioBuffer.forEach(item => delete item.blob);
+  window.tts_audioBuffer.forEach(item => delete item.blob);
   // 重置当前段落索引为0
-  window.currentSegmentIndex = 0;
+  window.tts_currentSegmentIndex = 0;
   // 重置累计缓存时长为0
-  window.totalCachedDuration = 0;
+  // window.tts_totalCachedDuration = 0;
   // 禁用下载按钮
   elements.ttsDownloadBtn.disabled = true;
   totalSegments = 0; // 重置 totalSegments
@@ -307,10 +304,10 @@ elements.ttsCloseBtn.addEventListener('click', () => {
 });
 
 // 监听 audioPlayer 的 timeupdate 事件，每当音频播放时间更新时触发
-window.audioPlayer.ontimeupdate = async () => {
+window.tts_audioPlayer.ontimeupdate = async () => {
   // 调用 updateTimeAndProgress 函数更新时间进度条和相关文本
-  window.updateTimeAndProgress(totalSegments);
+  window.tts_updateTimeAndProgress(totalSegments);
 };
 
 // 设置音频播放结束的回调函数
-window.audioPlayer.onended = window.handleAudioEnded;
+// window.tts_audioPlayer.onended = window.tts_handleAudioEnded;

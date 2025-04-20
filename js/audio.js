@@ -8,19 +8,19 @@ let isPlaying = false;
 async function fetchAudioSegment(segment, voice, speed, format, index, signal) {
   try {
     // 从存储中获取设置
-    const { settings } = await window.getStorageData(['settings']);
+    const { settings } = await window.tts_getStorageData(['settings']);
 
     // 确保 DEFAULT_SETTINGS 存在
-    if (!window.DEFAULT_SETTINGS) {
+    if (!window.tts_DEFAULT_SETTINGS) {
       throw new Error('DEFAULT_SETTINGS is not defined. Ensure func.js is loaded.');
     }
 
     // 合并默认设置，确保 openai 字段存在
     const effectiveSettings = {
-      ...window.DEFAULT_SETTINGS,
+      ...window.tts_DEFAULT_SETTINGS,
       ...settings,
       openai: {
-        ...window.DEFAULT_SETTINGS.openai,
+        ...window.tts_DEFAULT_SETTINGS.openai,
         ...(settings?.openai || {})
       }
     };
@@ -74,7 +74,7 @@ async function fetchAudioSegment(segment, voice, speed, format, index, signal) {
       return { index, success: false, error: { message: 'Fetch aborted', code: 'ABORT_ERROR' } };
     }
     console.error(`Error fetching segment ${index}:`, error.message);
-    window.showErrorNotification('fetchSegmentError', { index, error: error.message });
+    window.tts_showErrorNotification('fetchSegmentError', { index, error: error.message });
     return { 
       index, 
       success: false, 
@@ -133,21 +133,21 @@ async function fetchSegmentsSerially(segments, voice, speed, format, maxConcurre
         // 如果 
         if (segments.length === 1 || loadedSegments === 2) {
           // 检查全局播放状态并自动播放
-          if (!window.isPlaying) {
+          if (!window.tts_isPlaying) {
             try {
               await audioPlayer.play(); // 使用 await 确保播放成功开始
               const ttsPlayPauseBtn = document.getElementById('tts-play-pause-btn');
               if (ttsPlayPauseBtn) {
                 ttsPlayPauseBtn.textContent = '⏸';
               }
-              window.isPlaying = true;
+              window.tts_isPlaying = true;
               const loadingOverlay = document.getElementById('tts-loading-overlay');
               if (loadingOverlay) {
                 loadingOverlay.style.display = 'none'; // 关闭加载遮罩层
               }
             } catch (error) {
               console.error('Failed to play audio:', error);
-              window.showErrorNotification('audioPlaybackFailed');
+              window.tts_showErrorNotification('audioPlaybackFailed');
             }
             audioPlayer.oncanplay = null;
             audioPlayer.onerror = null;
@@ -164,7 +164,7 @@ async function fetchSegmentsSerially(segments, voice, speed, format, maxConcurre
       } else {
         hasError = true; // 标记错误，停止后续处理
         console.error(`Failed to fetch segment ${result.index}: ${result.error.message}`);
-        window.showErrorNotification('fetchSegmentError', { 
+        window.tts_showErrorNotification('fetchSegmentError', { 
           index: result.index, 
           error: result.error.message 
         });
@@ -179,7 +179,7 @@ async function fetchSegmentsSerially(segments, voice, speed, format, maxConcurre
     audioBuffer.forEach(item => URL.revokeObjectURL(item.url));
     audioBuffer.length = 0;
     totalCachedDuration = 0;
-    window.isPlaying = false;
+    window.tts_isPlaying = false;
     audioPlayer.src = '';
     const ttsPlayPauseBtn = document.getElementById('tts-play-pause-btn');
     if (ttsPlayPauseBtn) ttsPlayPauseBtn.textContent = '▶';
@@ -208,7 +208,7 @@ function updateTimeAndProgress(totalSegments) {
     timeDisplay.textContent = `${formatTime(currentTime)} ${formatTime(totalCachedDuration)}`;
   } else {
     console.error('Time display element not found');
-    window.showErrorNotification('timeDisplayNotFound');
+    window.tts_showErrorNotification('timeDisplayNotFound');
   }
   // 更新分片显示
   const segmentDisplay = document.getElementById('tts-segment-display');
@@ -216,7 +216,7 @@ function updateTimeAndProgress(totalSegments) {
     segmentDisplay.textContent = `${audioBuffer.length}/${totalSegments}`;
   } else {
     console.error('Segment display element not found');
-    window.showErrorNotification('segmentDisplayNotFound');
+    window.tts_showErrorNotification('segmentDisplayNotFound');
   }
 
   console.log('updateTimeAndProgress:', { totalSegments, audioBufferLength: audioBuffer.length });
@@ -248,11 +248,11 @@ window.addEventListener('unload', () => {
   isPlaying = false;
 });
 
-window.audioPlayer = audioPlayer;
-window.audioBuffer = audioBuffer;
-window.currentSegmentIndex = currentSegmentIndex;
-window.isPlaying = isPlaying;
-window.fetchSegmentsSerially = fetchSegmentsSerially;
-window.formatTime = formatTime;
-window.updateTimeAndProgress = updateTimeAndProgress;
-window.handleAudioEnded = handleAudioEnded;
+window.tts_audioPlayer = audioPlayer;
+window.tts_audioBuffer = audioBuffer;
+window.tts_currentSegmentIndex = currentSegmentIndex;
+window.tts_isPlaying = isPlaying;
+window.tts_fetchSegmentsSerially = fetchSegmentsSerially;
+// window.tts_formatTime = formatTime;
+window.tts_updateTimeAndProgress = updateTimeAndProgress;
+window.tts_handleAudioEnded = handleAudioEnded;

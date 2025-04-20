@@ -22,12 +22,12 @@ const exampleAudio = new Audio();
 // 通用的更新函数
 const updateSetting = async (key, value, subKey = null) => {
   try {
-    const result = await window.getStorageData(['settings']);
-    const currentSettings = result.settings || window.DEFAULT_SETTINGS;
+    const result = await window.tts_getStorageData(['settings']);
+    const currentSettings = result.settings || window.tts_DEFAULT_SETTINGS;
 
     // 如果是嵌套设置（如 openai.apiUrl），确保 openai 对象存在
     if (subKey && !currentSettings[key]) {
-      currentSettings[key] = { ...window.DEFAULT_SETTINGS[key] };
+      currentSettings[key] = { ...window.tts_DEFAULT_SETTINGS[key] };
     }
 
     if (subKey) {
@@ -49,7 +49,7 @@ const updateSetting = async (key, value, subKey = null) => {
     showSaveMessage();
   } catch (error) {
     console.error(`Failed to update setting ${key}${subKey ? `.${subKey}` : ''}:`, error);
-    window.showErrorNotification('saveSettingError', { 
+    window.tts_showErrorNotification('saveSettingError', { 
       key: subKey ? `${key}.${subKey}` : key, 
       error: error.message 
     });
@@ -65,7 +65,7 @@ function showSaveMessage() {
   setTimeout(() => elements.saveMessage.classList.remove('show'), 2000); 
   } else {
     console.warn('Save message element not found, skipping display');
-    window.showErrorNotification('saveSettingError', { key: 'saveMessage' });
+    window.tts_showErrorNotification('saveSettingError', { key: 'saveMessage' });
   }
 }
 
@@ -73,7 +73,7 @@ function showSaveMessage() {
 async function updateExampleAudio() {
   if (!elements.voiceSelect) {
     console.warn('Voice select element not found, cannot update example audio');
-    window.showErrorNotification('voiceSelectNotFound');
+    window.tts_showErrorNotification('voiceSelectNotFound');
     return;
   }
 
@@ -88,7 +88,7 @@ async function updateExampleAudio() {
     exampleAudio.src = audioPath;
   } catch (error) {
     console.error('Failed to load example audio:', error);
-    window.showErrorNotification('audioFileNotFound', { voice: selectedVoice });
+    window.tts_showErrorNotification('audioFileNotFound', { voice: selectedVoice });
     exampleAudio.src = '';
     if (elements.playExampleBtn) elements.playExampleBtn.disabled = true;
   }
@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // 检查页面上下文
   if (!document.querySelector('#voices')) {
     console.warn('options.js running in unexpected context, skipping initialization');
-    window.showErrorNotification('unexpectedContext');
+    window.tts_showErrorNotification('unexpectedContext');
     return;
   }
 
@@ -112,11 +112,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   if (missingElements.length > 0) {
     console.error('Missing DOM elements:', missingElements);
-    window.showErrorNotification('domElementsMissing', { elements: missingElements.join(', ') });
+    window.tts_showErrorNotification('domElementsMissing', { elements: missingElements.join(', ') });
     // 如果关键元素缺失，禁用相关功能
     if (!elements.voiceSelect || !elements.formatSelect || !elements.languageBtn) {
       console.error('Critical elements missing, stopping initialization');
-      window.showErrorNotification('criticalElementsMissing');
+      window.tts_showErrorNotification('criticalElementsMissing');
       return;
     }
   }
@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const tooltipIcons = document.querySelectorAll('.tooltip-icon');
 
   // 防抖函数（复用 utils.js 中的 debounce）
-  const adjustTooltipPosition = window.debounce((event) => {
+  const adjustTooltipPosition = window.tts_debounce((event) => {
     const icon = event.target;
     const rect = icon.getBoundingClientRect();
     const tooltipText = icon.getAttribute('data-tooltip') || '';
@@ -178,10 +178,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // 初始化默认设置（如果存储中没有 settings）
   const initDefaultSettings = async () => {
-    const { settings } = await window.getStorageData(['settings']);
+    const { settings } = await window.tts_getStorageData(['settings']);
     if (!settings) {
       await new Promise(resolve => {
-        chrome.storage.sync.set({ settings: window.DEFAULT_SETTINGS }, resolve);
+        chrome.storage.sync.set({ settings: window.tts_DEFAULT_SETTINGS }, resolve);
       });
       console.log('Initialized default settings in storage');
     }
@@ -192,14 +192,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   // 获取并应用存储数据
   const applyStoredSettings = async () => {
     try {
-      const { settings, language, theme } = await window.getStorageData(['settings', 'language', 'theme']);
-      // const savedSettings = settings || window.DEFAULT_SETTINGS;
+      const { settings, language, theme } = await window.tts_getStorageData(['settings', 'language', 'theme']);
+      // const savedSettings = settings || window.tts_DEFAULT_SETTINGS;
       // 合并默认设置，确保 openai 字段存在
       const savedSettings = {
-        ...window.DEFAULT_SETTINGS,
+        ...window.tts_DEFAULT_SETTINGS,
         ...settings,
         openai: {
-        ...window.DEFAULT_SETTINGS.openai,
+        ...window.tts_DEFAULT_SETTINGS.openai,
         ...(settings?.openai || {})
         }
       };
@@ -229,33 +229,33 @@ document.addEventListener('DOMContentLoaded', async () => {
       // 设置语言和主题
       document.body.classList.remove('light', 'dark');
       document.body.classList.add(savedTheme);
-      window.updateLanguage(savedLanguage);
+      window.tts_updateLanguage(savedLanguage);
 
       // 调试下拉菜单样式
       console.log('options.js: voiceSelect background:', getComputedStyle(elements.voiceSelect).backgroundColor);
       console.log('options.js: voiceSelect color:', getComputedStyle(elements.voiceSelect).color);
     } catch (error) {
       console.error('Failed to load settings:', error);
-      window.showErrorNotification('saveSettingError', { key: 'settings', error: error.message });
+      window.tts_showErrorNotification('saveSettingError', { key: 'settings', error: error.message });
 
       document.body.classList.remove('light', 'dark');
       document.body.classList.add('light');
-      window.updateLanguage('en');
+      window.tts_updateLanguage('en');
 
-      if (elements.voiceSelect) elements.voiceSelect.value = window.DEFAULT_SETTINGS.voice;
-      if (elements.formatSelect) elements.formatSelect.value = window.DEFAULT_SETTINGS.format;
+      if (elements.voiceSelect) elements.voiceSelect.value = window.tts_DEFAULT_SETTINGS.voice;
+      if (elements.formatSelect) elements.formatSelect.value = window.tts_DEFAULT_SETTINGS.format;
       if (elements.rateSlider) {
-        elements.rateSlider.value = window.DEFAULT_SETTINGS.speed;
-        if (elements.rateValue) elements.rateValue.textContent = `${window.DEFAULT_SETTINGS.speed}%`;
+        elements.rateSlider.value = window.tts_DEFAULT_SETTINGS.speed;
+        if (elements.rateValue) elements.rateValue.textContent = `${window.tts_DEFAULT_SETTINGS.speed}%`;
       }
       if (elements.splitSlider) {
-        elements.splitSlider.value = window.DEFAULT_SETTINGS.splitLength;
-        if (elements.splitValue) elements.splitValue.textContent = window.DEFAULT_SETTINGS.splitLength;
+        elements.splitSlider.value = window.tts_DEFAULT_SETTINGS.splitLength;
+        if (elements.splitValue) elements.splitValue.textContent = window.tts_DEFAULT_SETTINGS.splitLength;
       }
-      if (elements.concurrencySelect) elements.concurrencySelect.value = window.DEFAULT_SETTINGS.concurrency;
+      if (elements.concurrencySelect) elements.concurrencySelect.value = window.tts_DEFAULT_SETTINGS.concurrency;
       if (elements.languageBtn) elements.languageBtn.value = 'en';
-      if (elements.apiUrlInput) elements.apiUrlInput.value = window.DEFAULT_SETTINGS.openai.apiUrl;
-      if (elements.apiKeyInput) elements.apiKeyInput.value = window.DEFAULT_SETTINGS.openai.apiKey;
+      if (elements.apiUrlInput) elements.apiUrlInput.value = window.tts_DEFAULT_SETTINGS.openai.apiUrl;
+      if (elements.apiKeyInput) elements.apiKeyInput.value = window.tts_DEFAULT_SETTINGS.openai.apiKey;
     }
   };
 
@@ -273,7 +273,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     elements.advancedToggle.addEventListener('click', () => {
       const isShown = elements.advancedSettings.classList.toggle('show');
       elements.advancedToggle.setAttribute('data-i18n', isShown ? 'hideAdvancedSettings' : 'advancedSettings');
-      window.updateLanguage(window.currentLang); // 刷新按钮文本
+      window.tts_updateLanguage(window.tts_currentLang); // 刷新按钮文本
     });
   }
 
@@ -281,7 +281,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (elements.languageBtn) {
     elements.languageBtn.addEventListener('change', (e) => {
       const lang = e.target.value;
-      window.updateLanguage(lang);
+      window.tts_updateLanguage(lang);
       chrome.storage.sync.set({ language: lang }, () => {
         // 打印调试信息
         // console.log('Language saved:', lang);
@@ -312,7 +312,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       elements.rateValue.textContent = `${sliderValue}%`; // 实时更新显示
     };
 
-    const saveRate = window.debounce((speed) => {
+    const saveRate = window.tts_debounce((speed) => {
       updateSetting('speed', 1 + (speed / 100)); // 保存到存储
     }, SAVE_DELAY); // 缩短延迟到 300ms
 
@@ -329,7 +329,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       elements.splitValue.textContent = sliderValue; // 实时更新显示
     };
 
-    const saveSplit = window.debounce((splitLength) => {
+    const saveSplit = window.tts_debounce((splitLength) => {
       updateSetting('splitLength', splitLength); // 保存到存储
     }, SAVE_DELAY); // 缩短延迟到 300ms
 
@@ -349,7 +349,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // 新增：处理 API URL 和 API Key 输入
   if (elements.apiUrlInput) {
-    const saveApiUrl = window.debounce((apiUrl) => {
+    const saveApiUrl = window.tts_debounce((apiUrl) => {
       updateSetting('openai', apiUrl, 'apiUrl');
     }, SAVE_DELAY);
 
@@ -359,7 +359,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   if (elements.apiKeyInput) {
-    const saveApiKey = window.debounce((apiKey) => {
+    const saveApiKey = window.tts_debounce((apiKey) => {
       updateSetting('openai', apiKey, 'apiKey');
     }, SAVE_DELAY);
 
@@ -375,7 +375,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (exampleAudio.src) { // 仅在 src 有效时播放
         exampleAudio.play().catch(error => {
           console.error('Failed to play audio:', error);
-          window.showErrorNotification('playAudioFailed');
+          window.tts_showErrorNotification('playAudioFailed');
         });
       }
     });
@@ -389,19 +389,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // 优化 storage 变化监听
-  const handleStorageChange = window.debounce((changes, area) => {
+  const handleStorageChange = window.tts_debounce((changes, area) => {
     if (area === 'sync') {
       if (changes.language && elements.languageBtn) {
-        window.currentLang = changes.language.newValue;
-        elements.languageBtn.value = window.currentLang;
-        window.updateLanguage(window.currentLang);
-        console.log('options.js: Language synced from storage:', window.currentLang);
+        window.tts_currentLang = changes.language.newValue;
+        elements.languageBtn.value = window.tts_currentLang;
+        window.tts_updateLanguage(window.tts_currentLang);
+        console.log('options.js: Language synced from storage:', window.tts_currentLang);
       }
       if (changes.theme) {
-        window.currentTheme = changes.theme.newValue;
+        window.tts_currentTheme = changes.theme.newValue;
         document.body.classList.remove('light', 'dark');
-        document.body.classList.add(window.currentTheme);
-        console.log('options.js: Theme synced from storage:', window.currentTheme);
+        document.body.classList.add(window.tts_currentTheme);
+        console.log('options.js: Theme synced from storage:', window.tts_currentTheme);
         // 调试下拉菜单样式
         console.log('options.js: voiceSelect background:', getComputedStyle(elements.voiceSelect).backgroundColor);
         console.log('options.js: voiceSelect color:', getComputedStyle(elements.voiceSelect).color);
@@ -416,5 +416,5 @@ document.addEventListener('DOMContentLoaded', async () => {
     chrome.storage.onChanged.removeListener(handleStorageChange);
     console.log('options.js: Cleaned up event listeners');
   };
-  window.addEventListener('unload', cleanup);
+  window.tts_addEventListener('unload', cleanup);
 });

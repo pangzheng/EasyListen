@@ -1,12 +1,12 @@
 // 获取当前设置的辅助函数
 async function getCurrentSettings() {
-  const { settings } = await window.getStorageData(['settings']);
-  // return settings || window.DEFAULT_SETTINGS;
+  const { settings } = await window.tts_getStorageData(['settings']);
+  // return settings || window.tts_DEFAULT_SETTINGS;
   return {
-    ...window.DEFAULT_SETTINGS,
+    ...window.tts_DEFAULT_SETTINGS,
     ...settings,
     openai: {
-      ...window.DEFAULT_SETTINGS.openai,
+      ...window.tts_DEFAULT_SETTINGS.openai,
       ...(settings?.openai || {})
     }
   };
@@ -21,7 +21,7 @@ async function updateTextareaContent(textarea) {
     // 如果 URL 是无效的或者以 "chrome://" 或 "about:" 开头，则提示错误信息
     if (!tab.url || tab.url.startsWith('chrome://') || tab.url.startsWith('about:')) {
       textarea.value = '';
-      window.showErrorNotification('pageAccessError');
+      window.tts_showErrorNotification('pageAccessError');
     } else {
       // 如果 URL 是有效的，则发送消息到内容脚本，获取页面内容
       try {
@@ -35,14 +35,14 @@ async function updateTextareaContent(textarea) {
         } else {
           // 否则提示没有内容可用的信息
           textarea.value = '';
-          window.showErrorNotification('noContentAvailable');
+          window.tts_showErrorNotification('noContentAvailable');
         }
       } catch (sendError) {
         // 如果发送消息时出现错误，且错误信息中包含 "Receiving end does not exist" 则提示脚本未加载
         if (sendError.message.includes('Receiving end does not exist')) {
           console.error('Content script not loaded in this tab:', sendError);
           textarea.value = '';
-          window.showErrorNotification('contentScriptNotLoaded');
+          window.tts_showErrorNotification('contentScriptNotLoaded');
         } else {
           // 如果其他类型的错误发生，则抛出此错误
           throw sendError;
@@ -53,7 +53,7 @@ async function updateTextareaContent(textarea) {
     // 处理外部的异常，即在获取标签页信息时发生的错误
     console.error('Error fetching page content:', error);
     textarea.value = '';
-    window.showErrorNotification('fetchContentError');
+    window.tts_showErrorNotification('fetchContentError');
   }
 }
 
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // 检查页面上下文
   if (!document.querySelector('#text-area')) {
     console.warn('ui.js running in unexpected context, skipping initialization');
-    window.showErrorNotification('unexpectedContext');
+    window.tts_showErrorNotification('unexpectedContext');
     return;
   }
 
@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (error) {
       console.error('Error fetching text:', error); // 打印错误到控制台
       // 第一次尝试
-      // alert(window.currentLang === 'en' 
+      // alert(window.tts_currentLang === 'en' 
       //   ? `Error fetching text: ${error}`
       //   : `获取文本出错:  ${error}`);
     }
@@ -116,19 +116,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   
   if (missingElements.length > 0) {
     console.error('The following DOM elements were not found:', missingElements);
-    window.showErrorNotification('domElementsMissing', { elements: missingElements.join(', ') });
+    window.tts_showErrorNotification('domElementsMissing', { elements: missingElements.join(', ') });
     return;
   }
   
   // 初始化语言和主题
   const initState = async () => {
     try {
-      const { language, theme } = await window.getStorageData(['language', 'theme']);
-      window.currentLang = language || 'en';
-      window.currentTheme = theme || 'light';
+      const { language, theme } = await window.tts_getStorageData(['language', 'theme']);
+      window.tts_currentLang = language || 'en';
+      window.tts_currentTheme = theme || 'light';
       document.body.classList.remove('light', 'dark');
-      document.body.classList.add(window.currentTheme);
-      window.updateLanguage(window.currentLang);
+      document.body.classList.add(window.tts_currentTheme);
+      window.tts_updateLanguage(window.tts_currentLang);
       await updateTextareaContent(elements.textarea);
 
       // 调试按钮样式
@@ -136,12 +136,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       // console.log('ui.js: langToggleBtn color:', getComputedStyle(elements.langToggleBtn).color);
     } catch (error) {
       console.error('Error initializing state:', error);
-      window.showErrorNotification('initStateError', { error: error.message });
-      window.currentLang = 'en';
-      window.currentTheme = 'light';
+      window.tts_showErrorNotification('initStateError', { error: error.message });
+      window.tts_currentLang = 'en';
+      window.tts_currentTheme = 'light';
       document.body.classList.remove('light', 'dark');
-      document.body.classList.add(window.currentTheme);
-      window.updateLanguage(window.currentLang);
+      document.body.classList.add(window.tts_currentTheme);
+      window.tts_updateLanguage(window.tts_currentLang);
       await updateTextareaContent(elements.textarea);
     }
   };
@@ -158,35 +158,35 @@ document.addEventListener('DOMContentLoaded', async () => {
   // 切换语言按钮
   elements.langToggleBtn.addEventListener('click', async () => {
     // 打印调试信息
-    // console.log('当前语言:', window.currentLang); 
-    const newLang = window.currentLang === 'en' ? 'zh' : 'en';
-    window.updateLanguage(newLang);
+    // console.log('当前语言:', window.tts_currentLang); 
+    const newLang = window.tts_currentLang === 'en' ? 'zh' : 'en';
+    window.tts_updateLanguage(newLang);
     try {
-      await window.setStorageData({ language: newLang }); // 初始化参数
+      await window.tts_setStorageData({ language: newLang }); // 初始化参数
       await updateTextareaContent(elements.textarea); // 语言切换后更新 textarea
       // 打印调试信息
       // console.log('Language saved to chrome.storage.sync:', newLang);
     } catch (error) {
       console.error('Error saving language:', error);
-      window.showErrorNotification('saveLanguageError', { error: error.message });
+      window.tts_showErrorNotification('saveLanguageError', { error: error.message });
     }
   });
 
   // 切换主题按钮
   elements.themeBtn.addEventListener('click', async () => {
-    window.currentTheme = document.body.classList.contains('light') ? 'dark' : 'light';
+    window.tts_currentTheme = document.body.classList.contains('light') ? 'dark' : 'light';
     document.body.classList.remove('light', 'dark');
-    document.body.classList.add(window.currentTheme);
-    window.updateLanguage(window.currentLang);
+    document.body.classList.add(window.tts_currentTheme);
+    window.tts_updateLanguage(window.tts_currentLang);
     try {
-      await window.setStorageData({ theme: window.currentTheme });
-      // console.log('ui.js: Theme saved:', window.currentTheme);
+      await window.tts_setStorageData({ theme: window.tts_currentTheme });
+      // console.log('ui.js: Theme saved:', window.tts_currentTheme);
       // 调试按钮样式
       // console.log('ui.js: langToggleBtn background:', getComputedStyle(elements.langToggleBtn).backgroundColor);
       // console.log('ui.js: langToggleBtn color:', getComputedStyle(elements.langToggleBtn).color);
     } catch (error) {
       console.error('Error saving theme:', error);
-      window.showErrorNotification('saveThemeError', { error: error.message });
+      window.tts_showErrorNotification('saveThemeError', { error: error.message });
     }
   });
 
@@ -200,12 +200,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
      // 如果没有输入文本，则提示用户
     if (!content) {
-      window.showErrorNotification('emptyTextError');
+      window.tts_showErrorNotification('emptyTextError');
       return;
     }
 
     // 将内容按指定长度分割成多个段落
-    const segments = window.splitText(content, settings.splitLength);
+    const segments = window.tts_splitText(content, settings.splitLength);
 
     console.log('Text segments:', segments);
 
@@ -223,7 +223,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }, (response) => { // 回调函数：接收内容脚本的响应
       if (chrome.runtime.lastError) { //检查消息发送过程中是否发生错误
         console.error('Error sending message:', chrome.runtime.lastError); // 记录详细错误信息
-        window.showErrorNotification('sendMessageError', { error: chrome.runtime.lastError.message });
+        window.tts_showErrorNotification('sendMessageError', { error: chrome.runtime.lastError.message });
       } else {
         // 打印跟踪信息
         console.log('Audio generation started:', response);
@@ -232,19 +232,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   // 监听 chrome.storage 的变化
-  const handleStorageChange = window.debounce(async (changes, area) => {
+  const handleStorageChange = window.tts_debounce(async (changes, area) => {
     if (area === 'sync') {
       if (changes.language) {
-        window.currentLang = changes.language.newValue;
-        window.updateLanguage(window.currentLang);
+        window.tts_currentLang = changes.language.newValue;
+        window.tts_updateLanguage(window.tts_currentLang);
         await updateTextareaContent(elements.textarea);
-        console.log('ui.js: Language synced from storage:', window.currentLang);
+        console.log('ui.js: Language synced from storage:', window.tts_currentLang);
       }
       if (changes.theme) {
-        window.currentTheme = changes.theme.newValue;
+        window.tts_currentTheme = changes.theme.newValue;
         document.body.classList.remove('light', 'dark');
-        document.body.classList.add(window.currentTheme);
-        console.log('ui.js: Theme synced from storage:', window.currentTheme);
+        document.body.classList.add(window.tts_currentTheme);
+        console.log('ui.js: Theme synced from storage:', window.tts_currentTheme);
         // 调试按钮样式
         console.log('ui.js: langToggleBtn background:', getComputedStyle(elements.langToggleBtn).backgroundColor);
         console.log('ui.js: langToggleBtn color:', getComputedStyle(elements.langToggleBtn).color);

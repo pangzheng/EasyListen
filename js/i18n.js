@@ -152,7 +152,7 @@ const translations = {
 
 // 更新界面语言
 function updateLanguage(lang) {
-  window.currentLang = lang;
+  window.tts_currentLang = lang;
 
   // 获取版本号
   const manifest = chrome.runtime.getManifest();
@@ -231,12 +231,12 @@ function updateLanguage(lang) {
 // // 页面加载时初始化语言
 document.addEventListener('DOMContentLoaded', async () => {
   try {
-    const result = await window.getStorageData(['language']);
+    const result = await window.tts_getStorageData(['language']);
     const savedLanguage = result.language || 'en';
     updateLanguage(savedLanguage);
   } catch (error) {
     console.error('Failed to initialize language from storage:', error);
-    alert(window.currentLang === 'en' 
+    alert(window.tts_currentLang === 'en' 
       ? `Failed to initialize language from storage:' ${error} `
       : `从存储初始化语言失败：${error}`);
     // 后备方案：使用默认语言 'en'
@@ -245,4 +245,4 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
   
 // 暴露全局变量和函数
-window.updateLanguage = updateLanguage;
+window.tts_updateLanguage = updateLanguage;
