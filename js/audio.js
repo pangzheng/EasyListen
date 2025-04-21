@@ -158,6 +158,7 @@ async function fetchSegmentsSerially(segments, voice, speed, format, maxConcurre
 
     // 取出当前批次的任务（最多 maxConcurrency 个）
     const currentBatch = queue.splice(0, maxConcurrency);
+
     // 对每个任务发起请求并收集结果
     const requests = currentBatch.map(({ segment, index }) =>
       fetchAudioSegment(segment, voice, speed, format, index, signal)
@@ -224,6 +225,7 @@ async function fetchSegmentsSerially(segments, voice, speed, format, maxConcurre
         break; // 中断当前批次处理
       }
     }
+
     if (hasError) break;
   }
 
@@ -287,22 +289,6 @@ function updateTimeAndProgress(totalSegments) {
   console.log('updateTimeAndProgress:', { totalSegments, audioBufferLength: audioBuffer.length });
 }
 
-// 播放/暂停按钮事件处理
-function handleAudioEnded() {
-  if (currentSegmentIndex + 1 < audioBuffer.length) {
-    currentSegmentIndex++;
-    audioPlayer.src = audioBuffer[currentSegmentIndex].url;
-    audioPlayer.play();
-  } else {
-    const playPauseBtn = document.getElementById('tts-play-pause-btn');
-    if (playPauseBtn) {
-      playPauseBtn.textContent = '▶';
-    }
-    isPlaying = false;
-    currentSegmentIndex = 0;
-  }
-}
-
 // 页面卸载时清理资源
 window.addEventListener('unload', () => {
   audioBuffer.forEach(item => URL.revokeObjectURL(item.url));
@@ -319,4 +305,3 @@ window.tts_currentSegmentIndex = currentSegmentIndex;
 window.tts_isPlaying = isPlaying;
 window.tts_fetchSegmentsSerially = fetchSegmentsSerially;
 window.tts_updateTimeAndProgress = updateTimeAndProgress;
-window.tts_handleAudioEnded = handleAudioEnded;

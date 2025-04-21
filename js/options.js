@@ -45,7 +45,7 @@ const updateSetting = async (key, value, subKey = null) => {
         }
       });
     });
-    console.log(`${key}${subKey ? `.${subKey}` : ''} saved:`, value);
+    // console.log(`${key}${subKey ? `.${subKey}` : ''} saved:`, value);
     showSaveMessage();
   } catch (error) {
     console.error(`Failed to update setting ${key}${subKey ? `.${subKey}` : ''}:`, error);
@@ -230,10 +230,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       document.body.classList.remove('light', 'dark');
       document.body.classList.add(savedTheme);
       window.tts_updateLanguage(savedLanguage);
-
-      // 调试下拉菜单样式
-      console.log('options.js: voiceSelect background:', getComputedStyle(elements.voiceSelect).backgroundColor);
-      console.log('options.js: voiceSelect color:', getComputedStyle(elements.voiceSelect).color);
     } catch (error) {
       console.error('Failed to load settings:', error);
       window.tts_showErrorNotification('saveSettingError', { key: 'settings', error: error.message });
@@ -395,16 +391,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.tts_currentLang = changes.language.newValue;
         elements.languageBtn.value = window.tts_currentLang;
         window.tts_updateLanguage(window.tts_currentLang);
-        console.log('options.js: Language synced from storage:', window.tts_currentLang);
+        // console.log('options.js: Language synced from storage:', window.tts_currentLang);
       }
       if (changes.theme) {
         window.tts_currentTheme = changes.theme.newValue;
         document.body.classList.remove('light', 'dark');
         document.body.classList.add(window.tts_currentTheme);
-        console.log('options.js: Theme synced from storage:', window.tts_currentTheme);
-        // 调试下拉菜单样式
-        console.log('options.js: voiceSelect background:', getComputedStyle(elements.voiceSelect).backgroundColor);
-        console.log('options.js: voiceSelect color:', getComputedStyle(elements.voiceSelect).color);
+        // console.log('options.js: Theme synced from storage:', window.tts_currentTheme);
       }
     }
   }, 100);
@@ -414,7 +407,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // 清理监听器
   const cleanup = () => {
     chrome.storage.onChanged.removeListener(handleStorageChange);
-    console.log('options.js: Cleaned up event listeners');
+    // console.log('options.js: Cleaned up event listeners');
   };
   window.addEventListener('unload', cleanup);
 });

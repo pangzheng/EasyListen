@@ -77,27 +77,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     versionDisplay: document.getElementById('version-display') // 新增版本号元素
   };
   
-  // 初始化语言和主题已在 i18n.js 中处理
-  chrome.tabs.query(
-    { active: true, currentWindow: true },  // 查询条件：获取当前窗口中活跃的标签页
-    async (tabs) => { // 回调函数接收查询结果（tabs数组）
-    try {
-      const response = await chrome.tabs.sendMessage(
-        tabs[0].id,  // 获取第一个匹配标签页的ID（假设必有且只有一个）
-        { action: 'getText' }); // 向内容脚本发送请求，要求获取页面文本
-      if (response && response.text) { // 检查响应是否存在且包含text字段
-        console.log('test');
-        elements.textArea.value = response.text; // 将获取的文本显示到页面元素中
-      }
-    } catch (error) {
-      console.error('Error fetching text:', error); // 打印错误到控制台
-      // 第一次尝试
-      // alert(window.tts_currentLang === 'en' 
-      //   ? `Error fetching text: ${error}`
-      //   : `获取文本出错:  ${error}`);
-    }
-  });
-
   // 版本号已在 i18n.js 中设置，这里仅验证
   if (elements.versionDisplay) {
     console.log('Popup version display:', elements.versionDisplay.textContent);
@@ -130,10 +109,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       document.body.classList.add(window.tts_currentTheme);
       window.tts_updateLanguage(window.tts_currentLang);
       await updateTextareaContent(elements.textarea);
-
-      // 调试按钮样式
-      // console.log('ui.js: langToggleBtn background:', getComputedStyle(elements.langToggleBtn).backgroundColor);
-      // console.log('ui.js: langToggleBtn color:', getComputedStyle(elements.langToggleBtn).color);
     } catch (error) {
       console.error('Error initializing state:', error);
       window.tts_showErrorNotification('initStateError', { error: error.message });
