@@ -72,7 +72,8 @@ const translations = {
       noAudioAvailable: "No audio available to play.",
       playAudioFailed: "Failed to play audio. Please try again.",
       noAudioToDownload: "No audio available to download. Please generate audio first.",
-      downloadAudioFailed: "Failed to download audio. Please try again."
+      downloadAudioFailed: "Failed to download audio. Please try again.",
+      fetchError: "Error fetching audio"
     },
     zh: {
       // popup.html
@@ -146,7 +147,8 @@ const translations = {
       noAudioAvailable: "没有可播放的音频。",
       playAudioFailed: "播放音频失败，请重试。",
       noAudioToDownload: "没有可下载的音频，请先生成音频。",
-      downloadAudioFailed: "下载音频失败，请重试。"
+      downloadAudioFailed: "下载音频失败，请重试。",
+      fetchError: "获取音频时出错"
     }
 };
 

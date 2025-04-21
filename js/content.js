@@ -78,29 +78,26 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     // 创建新的 AbortController 用于取消 fetch
     abortController = new AbortController();
 
-    // 显示浮动 UI 元素
-    floatingUI.style.display = 'block';
+    floatingUI.style.display = 'block';   // 显示浮动 UI 元素
 
-    // 获取并显示输出组元素
     const uiContainer = document.getElementById('tts-ui-container');
-    uiContainer.style.display = 'block';
+    uiContainer.style.display = 'block'; // 获取并显示输出组元素
 
-    // 显示加载遮罩层
     const loadingOverlay = document.getElementById('tts-loading-overlay');
-    loadingOverlay.style.display = 'block'; 
+    loadingOverlay.style.display = 'block';  // 显示加载遮罩层
 
-    // 统一计算 totalSegments
     totalSegments = segments.length; // 计算总分段数
 
-    // 调用 window 的 fetchSegmentsSerially 函数，按序列获取 segments 中的音频片段
+    // 调用全局 fetchSegmentsSerially 函数，按序列获取 segments 中的音频片段
     window.tts_fetchSegmentsSerially(segments, voice, speed, format, concurrency, abortController.signal).then(() => {
       window.tts_updateTimeAndProgress(totalSegments);
     }).catch((error) => {
       if (error.name === 'AbortError') {
         console.log('Fetch aborted');
       } else {
-        console.error('Fetch error:', error);
+        console.error('Fetch error:', error);  
       }
+      window.tts_showErrorNotification('fetchError'); // 显示错误通知
     });;
     
     // 发送响应消息给调用方，表示操作已经开始
@@ -251,4 +248,5 @@ elements.ttsCloseBtn.addEventListener('click', () => {
 window.tts_audioPlayer.ontimeupdate = async () => {
   // 调用 updateTimeAndProgress 函数更新时间进度条和相关文本
   window.tts_updateTimeAndProgress(totalSegments);
+  // console.log('Audio buffer:', window.tts_audioBuffer); // 调试日志
 };

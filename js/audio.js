@@ -113,6 +113,7 @@ async function fetchAudioSegment(segment, voice, speed, format, index, signal) {
       tempAudio.onerror = () => reject(new Error(`Metadata loading failed for segment ${index}`));
     });
 
+    // 获取音频时长
     const duration = Math.floor(tempAudio.duration);
 
     // 累加总时长（秒）
@@ -139,39 +140,31 @@ async function fetchAudioSegment(segment, voice, speed, format, index, signal) {
 
 // 获取音频分片并串行处理
 async function fetchSegmentsSerially(segments, voice, speed, format, maxConcurrency, signal) {
-  // 初始化总缓存时长和音频缓冲区
-  totalCachedDuration = 0;
-  audioBuffer.length = 0;
+  totalCachedDuration = 0; // 初始化总缓存时长和音频缓冲区
+  audioBuffer.length = 0; // 清空音频缓冲区
   let loadedSegments = 0; // 新增计数器，跟踪成功加载的段数
-
-  // 将分片信息打包成对象放入队列中
-  const queue = segments.map((segment, index) => ({ segment, index }));
+  const queue = segments.map((segment, index) => ({ segment, index })); // 队列中存储 { segment, index } 对象
   let hasError = false; // 标记是否发生错误
   
   // 当队列中有未处理的数据时循环执行
   while (queue.length > 0) {
-    // 检查是否已取消
-    if (signal?.aborted) {
+    if (signal?.aborted) { // 检查是否已取消
       console.log('FetchSegmentsSerially aborted');
       throw new DOMException('Fetch aborted', 'AbortError');
     }
 
-    // 取出当前批次的任务（最多 maxConcurrency 个）
-    const currentBatch = queue.splice(0, maxConcurrency);
+    const currentBatch = queue.splice(0, maxConcurrency); // 取出当前批次的任务（最多 maxConcurrency 个）
 
     // 对每个任务发起请求并收集结果
     const requests = currentBatch.map(({ segment, index }) =>
-      fetchAudioSegment(segment, voice, speed, format, index, signal)
+      fetchAudioSegment(segment, voice, speed, format, index, signal)  // 单分片音频转换请求
     );
 
-    // 等待所有请求完成，并获取结果
-    const results = await Promise.all(requests);
+    const results = await Promise.all(requests); // 等待所有请求完成
 
-    // 遍历所有请求的结果
-    for (const result of results) {
+    for (const result of results) {  // 遍历所有请求的结果
       if (result.success) {
-        // 将语音段落添加到缓冲区中
-        audioBuffer[result.index] = { 
+        audioBuffer[result.index] = {  // 将语音段落添加到缓冲区中
           url: URL.createObjectURL(result.blob), 
           duration: result.duration,
           blob: result.blob // 保存原始 blob
@@ -183,18 +176,17 @@ async function fetchSegmentsSerially(segments, voice, speed, format, maxConcurre
           audioPlayer.src = audioBuffer[0].url;
         }  
         
-        // 如果是最后一个语音片段，更新播放时间和进度条
-        if (segments.length === 1 || loadedSegments === 2) {
-          // 检查全局播放状态并自动播放
-          if (!window.tts_isPlaying) {
+        if (segments.length === 1 || loadedSegments === 2) { // 如果语音只有一段，或者已经加载了两段
+          if (!window.tts_isPlaying) { // 检查全局播放状态并自动播放
             try {
               await audioPlayer.play(); // 使用 await 确保播放成功开始
-              const ttsPlayPauseBtn = document.getElementById('tts-play-pause-btn');
+              const ttsPlayPauseBtn = document.getElementById('tts-play-pause-btn'); // 加载按钮
               if (ttsPlayPauseBtn) {
-                ttsPlayPauseBtn.textContent = '⏸';
+                ttsPlayPauseBtn.textContent = '⏸'; // 转换图标
+                window.tts_isPlaying = true; // 设置全局播放状态
               }
-              window.tts_isPlaying = true;
-              const loadingOverlay = document.getElementById('tts-loading-overlay');
+              
+              const loadingOverlay = document.getElementById('tts-loading-overlay');  // 加载遮罩层
               if (loadingOverlay) {
                 loadingOverlay.style.display = 'none'; // 关闭加载遮罩层
               }
@@ -202,19 +194,17 @@ async function fetchSegmentsSerially(segments, voice, speed, format, maxConcurre
               console.error('Failed to play audio:', error);
               window.tts_showErrorNotification('audioPlaybackFailed');
             }
-            audioPlayer.oncanplay = null;
-            audioPlayer.onerror = null;
+            audioPlayer.oncanplay = null; // 清除事件监听器，避免重复触发
+            audioPlayer.onerror = null; // 清除错误监听器
           }
         }
 
-        // 如果所有语音片段都已加载完成，启用下载按钮
-        if (loadedSegments === segments.length) {
-          const ttsDownloadBtn = document.getElementById('tts-download-btn')
+        if (loadedSegments === segments.length) { // 如果所有语音片段都已加载完成
+          const ttsDownloadBtn = document.getElementById('tts-download-btn') // 加载按钮
           if (ttsDownloadBtn) {
-            ttsDownloadBtn.disabled = false;
+            ttsDownloadBtn.disabled = false; //启用下载按钮
           }
-        }
-        
+        }    
       } else {
         hasError = true; // 标记错误，停止后续处理
         console.error(`Failed to fetch segment ${result.index}: ${result.error.message}`);
@@ -226,7 +216,7 @@ async function fetchSegmentsSerially(segments, voice, speed, format, maxConcurre
       }
     }
 
-    if (hasError) break;
+    if (hasError) break; // 处理音频分片时发生错误，停止处理
   }
 
   if (hasError) {
@@ -238,12 +228,13 @@ async function fetchSegmentsSerially(segments, voice, speed, format, maxConcurre
     audioPlayer.src = '';
     const ttsPlayPauseBtn = document.getElementById('tts-play-pause-btn');
     if (ttsPlayPauseBtn) ttsPlayPauseBtn.textContent = '▶';
-  }
 
+    return { success: hasError, error: 'fetchError' }; // 返回错误信息
+  }
   return { success: !hasError, audioBuffer }; // 返回处理结果
 }
 
-// 格式化时间
+// 系统时间格式化成普通时间时间
 function formatTime(seconds) {
   const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
   const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
