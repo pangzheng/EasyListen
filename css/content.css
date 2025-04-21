@@ -14,6 +14,7 @@
 
 /* 浮动UI样式 */
 #tts-floating-ui {
+    font-family: Arial, sans-serif; /*设置字体*/
     position: fixed;
     bottom: 20px;
     right: 30px;
@@ -88,24 +89,13 @@
 
 /* 语音合成UI的正面和反面 */
 .tts-page {
-    position: absolute;
-    width: 80%;
-    height: 80%;
-    backface-visibility: hidden;
-    display: flex;
+    /* height: 30px !important; */
     align-items: center;
     justify-content: space-between;
     padding: 10px;
     background: #f0f0f0;
     border-radius: 4px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-}
-
-/* 正面动画 */
-#tts-front-page {
-    display: flex;
-    align-items: center;
-    gap: 20px;
 }
 
 /* 时间和分片字体设置 */
@@ -115,14 +105,22 @@
     color: #333;
 }
 
+/* 正面动画 */
+#tts-front-page {
+    display: flex;
+    align-items: center;
+}
+
 /* 反面动画 */
 #tts-back-page > * {
     transform: rotateY(180deg);
     transform-origin: center;
+    height: 30px !important;
 }
 
 /* 关闭按钮 */
 #tts-close-btn {
+    font-family: Arial, sans-serif; /*设置字体*/
     top: -15px;
     right: -15px;
     width: 15px;
@@ -144,6 +142,7 @@ body.dark #tts-close-btn:hover {
 #tts-download-btn,
 #tts-flip-btn,
 #tts-close-btn {
+    font-family: Arial, sans-serif; /*设置字体*/
     border-radius: 50%;
     padding: 0;
     display: flex;
@@ -163,6 +162,7 @@ body.dark #tts-close-btn:hover {
 /* 下载和播放暂停按钮 */
 #tts-play-pause-btn,
 #tts-download-btn {
+    background: #f0f0f0;
     font-size: 25px;
     color: black;
     border-radius: 50%;

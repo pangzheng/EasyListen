@@ -127,8 +127,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
   // 消息中的 action 包含 'generateAudio'
   if (message.action === 'generateAudio') {
-    // 从 message 中获取 segments, voice, speed, format, concurrency 和 text
-    // const { segments, voice, speed, format, concurrency, text  } = message;
+    // 从 message 中获取 segments, voice, speed, format, concurrency 
     const { segments, voice, speed, format, concurrency  } = message;
 
     // 创建新的 AbortController 用于取消 fetch
