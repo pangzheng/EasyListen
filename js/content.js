@@ -252,6 +252,3 @@ window.tts_audioPlayer.ontimeupdate = async () => {
   // 调用 updateTimeAndProgress 函数更新时间进度条和相关文本
   window.tts_updateTimeAndProgress(totalSegments);
 };
-
-// 设置音频播放结束的回调函数
-// window.tts_audioPlayer.onended = window.tts_handleAudioEnded;
