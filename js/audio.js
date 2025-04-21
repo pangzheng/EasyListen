@@ -143,6 +143,7 @@ async function fetchSegmentsSerially(segments, voice, speed, format, maxConcurre
   totalCachedDuration = 0;
   audioBuffer.length = 0;
   let loadedSegments = 0; // 新增计数器，跟踪成功加载的段数
+
   // 将分片信息打包成对象放入队列中
   const queue = segments.map((segment, index) => ({ segment, index }));
   let hasError = false; // 标记是否发生错误
@@ -181,7 +182,7 @@ async function fetchSegmentsSerially(segments, voice, speed, format, maxConcurre
           audioPlayer.src = audioBuffer[0].url;
         }  
         
-        // 如果 
+        // 如果是最后一个语音片段，更新播放时间和进度条
         if (segments.length === 1 || loadedSegments === 2) {
           // 检查全局播放状态并自动播放
           if (!window.tts_isPlaying) {
@@ -212,6 +213,7 @@ async function fetchSegmentsSerially(segments, voice, speed, format, maxConcurre
             ttsDownloadBtn.disabled = false;
           }
         }
+        
       } else {
         hasError = true; // 标记错误，停止后续处理
         console.error(`Failed to fetch segment ${result.index}: ${result.error.message}`);
@@ -270,6 +272,18 @@ function updateTimeAndProgress(totalSegments) {
     window.tts_showErrorNotification('segmentDisplayNotFound');
   }
 
+  console.log(`currentTime: ${currentTime} totalCachedDuration: ${totalCachedDuration}`);
+
+  // 如果播放时间大于或等于总时长，播放按钮设置成暂停
+  if (currentTime >= totalCachedDuration) {
+    const ttsPlayPauseBtn = document.getElementById('tts-play-pause-btn');
+    if (ttsPlayPauseBtn) {
+      ttsPlayPauseBtn.textContent = '▶';
+      window.tts_isPlaying = false;
+    }
+  }
+  
+  // 更新进度条
   console.log('updateTimeAndProgress:', { totalSegments, audioBufferLength: audioBuffer.length });
 }
 
@@ -304,6 +318,5 @@ window.tts_audioBuffer = audioBuffer;
 window.tts_currentSegmentIndex = currentSegmentIndex;
 window.tts_isPlaying = isPlaying;
 window.tts_fetchSegmentsSerially = fetchSegmentsSerially;
-// window.tts_formatTime = formatTime;
 window.tts_updateTimeAndProgress = updateTimeAndProgress;
 window.tts_handleAudioEnded = handleAudioEnded;
