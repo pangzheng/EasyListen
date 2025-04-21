@@ -1,8 +1,24 @@
 const audioPlayer = new Audio();
-const audioBuffer = []; // 存储 { url, duration }
+const audioBuffer = []; // 音频缓冲区,数据结构为 { url: 'blob_url', duration: 0, blob: Blob }
 let currentSegmentIndex = 0;
 let totalCachedDuration = 0;
 let isPlaying = false;
+
+// 处理分片播放结束
+function handleEnded() {
+  if (currentSegmentIndex < audioBuffer.length - 1) {
+    currentSegmentIndex++;
+    audioPlayer.src = audioBuffer[currentSegmentIndex].url;
+    audioPlayer.play().catch(err => {
+      console.error('播放失败:', err);
+      tts_isPlaying = false;
+    });
+  } else {
+    tts_isPlaying = false;
+    audioBuffer.forEach(segment => URL.revokeObjectURL(segment.url)); // 释放资源
+    console.log('所有分片播放完毕');
+  }
+}
 
 // 检测 CSP 是否阻止 blob: URL
 async function checkCSPSupportForBlob(blob = null) {
@@ -97,7 +113,7 @@ async function fetchAudioSegment(segment, voice, speed, format, index, signal) {
     if (blob.size === 0 || !blob.type.startsWith('audio/')) {
       throw new Error(`Invalid audio blob for segment ${index}: size=${blob.size}, type=${blob.type}`);
     }
-    console.log(`Segment ${index} blob:`, { size: blob.size, type: blob.type });
+    // console.log(`Segment ${index} blob:`, { size: blob.size, type: blob.type });
     
     // 检查 CSP 是否支持 blob:，使用实际的音频 blob
     const isBlobSupported = await checkCSPSupportForBlob(blob);
@@ -190,6 +206,10 @@ async function fetchSegmentsSerially(segments, voice, speed, format, maxConcurre
               if (loadingOverlay) {
                 loadingOverlay.style.display = 'none'; // 关闭加载遮罩层
               }
+
+              // 添加 ended 事件监听器
+              audioPlayer.addEventListener('ended', handleEnded);
+
             } catch (error) {
               console.error('Failed to play audio:', error);
               window.tts_showErrorNotification('audioPlaybackFailed');
@@ -265,7 +285,7 @@ function updateTimeAndProgress(totalSegments) {
     window.tts_showErrorNotification('segmentDisplayNotFound');
   }
 
-  console.log(`currentTime: ${currentTime} totalCachedDuration: ${totalCachedDuration}`);
+  // console.log(`currentTime: ${currentTime} totalCachedDuration: ${totalCachedDuration}`);
 
   // 如果播放时间大于或等于总时长，播放按钮设置成暂停
   if (currentTime >= totalCachedDuration) {
@@ -277,7 +297,7 @@ function updateTimeAndProgress(totalSegments) {
   }
   
   // 更新进度条
-  console.log('updateTimeAndProgress:', { totalSegments, audioBufferLength: audioBuffer.length });
+  // console.log('updateTimeAndProgress:', { totalSegments, audioBufferLength: audioBuffer.length });
 }
 
 // 页面卸载时清理资源
@@ -288,6 +308,14 @@ window.addEventListener('unload', () => {
   totalCachedDuration = 0;
   currentSegmentIndex = 0;
   isPlaying = false;
+});
+
+// 更新时间和进度
+audioPlayer.addEventListener('timeupdate', () => {
+  const totalDuration = audioBuffer.reduce((sum, seg) => sum + seg.duration, 0);
+  const elapsed = audioBuffer.slice(0, currentSegmentIndex).reduce((sum, seg) => sum + seg.duration, 0) + audioPlayer.currentTime;
+  const progress = (elapsed / totalDuration) * 100;
+  console.log(`时间: ${elapsed.toFixed(1)}s, 进度: ${progress.toFixed(1)}%`);
 });
 
 window.tts_audioPlayer = audioPlayer;

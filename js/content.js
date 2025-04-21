@@ -6,7 +6,7 @@ let isFrontPage = true; // 跟踪当前页面（正/反）
 window.tts_getStorageData(['theme']).then((result) => {
   const theme = result.theme || 'light'; // 默认 light 主题
   document.body.classList.add(theme); // 添加 light 或 dark 类
-  console.log(`Applied theme: ${theme}`); // 调试日志
+  console.log(`EasyListen Applied theme: ${theme}`); // 调试日志
 }).catch((error) => {
   console.error('Failed to load theme:', error);
   document.body.classList.add('light'); // 错误时回退到 light

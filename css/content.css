@@ -182,7 +182,7 @@ body.dark #tts-close-btn:hover {
     position: relative;
     left: 50%;
     transform: translate(-50%, -50%);
-    bottom: -15px;
+    bottom: -20px;
     color: var(--ui-text-color);
     box-shadow: 0 2px 10px var(--shadow-color);
 }
